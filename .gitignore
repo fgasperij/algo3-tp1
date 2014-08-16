@@ -1,3 +1,7 @@
+# Latex OH
+*.aux
+*.toc
+
 # Compiled Object files
 *.slo
 *.lo
