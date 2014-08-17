@@ -1,0 +1,4 @@
+1) Dos edificios separados
+2) Dos edificios superpuestos
+3) Dos edificios superpuestos de igual altura
+4) Dos edificios: uno empieza donde el otro termina
