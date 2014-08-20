@@ -47,6 +47,11 @@ int biohazardCamion(int camion, vector<Producto> &productos) {
 
 void meterProductoPorIdEnCamion(unsigned int id, int camion, vector<Producto> &productos, 
                                     int &cantidadCamiones, int maximaPeligrosidad, bool &termine) {
+    //cout << cantidadCamiones << " ";
+    //for (vector<Producto>::iterator it = productos.begin(); it != productos.end(); it++) {
+        //cout << it->camion << " ";
+    //}
+    //cout << endl;
     if (termine) {
         return;
     }
@@ -63,7 +68,11 @@ void meterProductoPorIdEnCamion(unsigned int id, int camion, vector<Producto> &p
             return;
         }
         for (int k = 0; k < cantidadCamiones; k++) {
+            for ( unsigned int i = id + 1; i < productos.size(); i++) {
+                productos[i].camion = -1;
+            }
             meterProductoPorIdEnCamion(id + 1, k, productos, cantidadCamiones, maximaPeligrosidad, termine);
+            if (termine) break;
         }
     }
 }
