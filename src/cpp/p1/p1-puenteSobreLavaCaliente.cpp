@@ -28,7 +28,9 @@ int main(int argc, const char *argv[])
             cin >> puente[i];
             assert(puente[i]==1 || puente[i]==0);
         }    
+
         saltos = cruzarPuente(puente, cantidadDeTablones, largoSalto);
+
         // cruzarPuente devuelve el vector saltos vacío si no puede
         // cruzarse con el largoSalto recibido 
         if (saltos.size() == 0) { 
@@ -63,6 +65,10 @@ vector<int> cruzarPuente(int puente[], int cantidadDeTablones, int largoSalto)
     }
 }
 
+/* Dado un puente y un tablon devuelve cual es el salto más largo que se puede
+ * realizar desde ese tablón. Si no puede realizarse ningún salto devuelve
+ * IMPOSIBLE(-1)
+ * */
 int calcularProximoTablon(int puente[], int cantidadDeTablones, int actual, int largoSalto)
 {
     while (largoSalto > 0) {
