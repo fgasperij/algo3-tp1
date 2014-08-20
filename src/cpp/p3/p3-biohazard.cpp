@@ -26,10 +26,12 @@ int peligrosidades[1024][1024];
 int main(int argc, const char *argv[])
 {
     int n, umbralDePeligrosidad;
+    int i = 1;
     while(true) {
         cin >> n;
         if (n == 0) return 0;
-
+        cout << "Instancia " << i << endl;
+        i++;
         cin >> umbralDePeligrosidad;
 
         for (int i = 0; i < n; i++) {
@@ -47,7 +49,7 @@ int main(int argc, const char *argv[])
            solucion.push_back(Camion(i)); 
         }
         bt(1, camiones, solucion, umbralDePeligrosidad, n);
-
+        
         int elementosCamiones[n];
         set<int>::iterator it;
         for(int i = 0; i < solucion.size(); i++) {
@@ -62,6 +64,7 @@ int main(int argc, const char *argv[])
             if (i < (n-1)) cout << " ";
         }
         cout << endl;
+        
     }
     return 0;
 }
@@ -69,8 +72,7 @@ int main(int argc, const char *argv[])
 void bt(int producto, vector<Camion> &camiones, vector<Camion> &mejorTemp,
     int umbral, int n)
 {
-    cout << "PRODUCTO: " << producto << endl;
-    mostrarCamiones(camiones);
+    //if (producto == n) mostrarCamiones(camiones);
     if (producto == n && camiones.size() < mejorTemp.size()) {
         mejorTemp = camiones;
         return;
@@ -98,7 +100,7 @@ bool agregarNoSuperaUmbral(int producto, const Camion &camion, int umbral)
     set<int>::iterator it;
     for (it = camion.productos.begin(); it != camion.productos.end(); it++) {
         acumPeligrosidad += peligrosidades[producto][*it];
-        if (acumPeligrosidad >= umbral) return false;
+        if (acumPeligrosidad > umbral) return false;
     }
     
     return true;
@@ -122,16 +124,19 @@ int agregarProducto(int producto, Camion &camion)
     return peligrosidadPrevia;
 }
 
+// Imprime el contenido de los camiones y la peligrosidad total del mismo
+// El formato es: 
+//      Camion i: p0 p1 ... pn (peligrosidad)
 void mostrarCamiones(const vector<Camion> &camiones)
 {
+    cout << "Combinación nueva" << endl;
     for (int i = 0; i < camiones.size(); i++) {
-        cout << "CAMION " << i << ": " << endl;
-        cout << "peligrosidad: " << camiones[i].peligrosidad << endl;
+        cout << "CAMION " << i << ": ";
         set<int>::iterator it;
-        cout << "productos: ";
         for (it = camiones[i].productos.begin(); it != camiones[i].productos.end(); it++) {
             cout << *it << " ";
         }
+        cout << "(" << camiones[i].peligrosidad << ")";
         cout << endl << endl;
     }
 }
