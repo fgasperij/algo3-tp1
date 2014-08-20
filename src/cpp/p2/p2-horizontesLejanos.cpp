@@ -33,6 +33,8 @@ struct Punto {
     int y;
 };
 
+vector<Punto> calcularContorno(const vector<Evento> &eventos);
+vector<Evento> generarEventos(const vector<Edificio> &edificios);
 bool comparar_eventos_por_x(const Evento &a, const Evento &b);
 
 int main(int argc, const char *argv[])
@@ -54,39 +56,12 @@ int main(int argc, const char *argv[])
         }
 
         // cada edificio va a tener un evento de empezar y uno de terminar
-        vector<Evento> eventos(cantidadDeEdificios*2);
-        for (int i = 0; i < cantidadDeEdificios; i++) {
-            eventos[i*2] = Evento (EMPIEZA, edificios[i].left, edificios[i].h, i);
-            eventos[i*2+1] = Evento (TERMINA, edificios[i].right, edificios[i].h, i);
-        }
-
+        vector<Evento> eventos = generarEventos(edificios);
+        // los eventos son ordenados por su coordenada x de forma ascendente
+        // desempata por el tipo de evento, EMPIEZA gana
         sort(eventos.begin(), eventos.end(), &comparar_eventos_por_x);
-        // alturas de edificios abiertos
-        multiset<int> abiertos;
-        multiset<int>::iterator itAbiertos;
-        Evento eventoActual;
-        int alturaContornoActual = 0;
-        vector<Punto> contorno;
 
-        for (int i = 0; i < eventos.size(); i++) {
-            eventoActual = eventos[i];
-            if (eventoActual.empieza()) {
-                abiertos.insert(eventoActual.h);
-                if (eventoActual.h > alturaContornoActual) {
-                    contorno.push_back(Punto(eventoActual.x, eventoActual.h));
-                    alturaContornoActual = eventoActual.h;
-                }
-            } else {
-                itAbiertos = abiertos.find(eventoActual.h); 
-                abiertos.erase(itAbiertos);
-                if (eventoActual.h == alturaContornoActual) {
-                    int tempAltura = alturaContornoActual;
-                    alturaContornoActual = (abiertos.empty() ? 0 : *abiertos.rbegin());
-                    if (tempAltura != alturaContornoActual)
-                        contorno.push_back(Punto(eventoActual.x, alturaContornoActual));
-                }
-            }
-        }
+        vector<Punto> contorno = calcularContorno(eventos);
 
         for (int i = 0; i < contorno.size(); i++) {
             cout << contorno[i].x << " " << contorno[i].y;
@@ -96,6 +71,53 @@ int main(int argc, const char *argv[])
     }
 
     return 0;
+}
+
+vector<Punto> calcularContorno(const vector<Evento> &eventos)
+{
+    // alturas de edificios abiertos
+    multiset<int> abiertos;
+    multiset<int>::iterator itAbiertos;
+    Evento eventoActual;
+    int alturaContornoActual = 0;
+    vector<Punto> contorno;
+
+    for (int i = 0; i < eventos.size(); i++) {
+        eventoActual = eventos[i];
+        if (eventoActual.empieza()) {
+            abiertos.insert(eventoActual.h);
+            if (eventoActual.h > alturaContornoActual) {
+                contorno.push_back(Punto(eventoActual.x, eventoActual.h));
+                alturaContornoActual = eventoActual.h;
+            }
+        } else {
+            // lo busco primero porque sólo quiero eliminar una aparición
+            // y puede que haya más de un edificio abierto con la misma
+            // altura
+            itAbiertos = abiertos.find(eventoActual.h); 
+            abiertos.erase(itAbiertos);
+            if (eventoActual.h == alturaContornoActual) {
+                int tempAltura = alturaContornoActual;
+                alturaContornoActual = (abiertos.empty() ? 0 : *abiertos.rbegin());
+                if (tempAltura != alturaContornoActual)
+                    contorno.push_back(Punto(eventoActual.x, alturaContornoActual));
+            }
+        }
+    }
+    
+    return contorno; 
+} 
+
+vector<Evento> generarEventos(const vector<Edificio> &edificios)
+{
+    int cantidadDeEdificios = edificios.size();
+    vector<Evento> eventos(cantidadDeEdificios*2);
+    for (int i = 0; i < cantidadDeEdificios; i++) {
+        eventos[i*2] = Evento (EMPIEZA, edificios[i].left, edificios[i].h, i);
+        eventos[i*2+1] = Evento (TERMINA, edificios[i].right, edificios[i].h, i);
+    }
+    
+    return eventos;
 }
 
 bool comparar_eventos_por_x(const Evento &a, const Evento &b)
