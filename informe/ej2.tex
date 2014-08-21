@@ -1,0 +1,75 @@
+\section{Problema 2: Horizontes lejanos}
+
+\subsection{Presentaci\'on del problema}
+%aca ponemos una interpretacion de lo que nos pide el enunciado y algunas aclaraciones de como vamos a encarar el problema.
+
+\subsection{Resoluci\'on}
+\subsubsection{Algoritmo}
+%aca ponemos una descripcion de nuestro algorimtmo, presentamos la variables las estructuras y decimos que hacemos.
+
+\subsubsection{Pseudoc\'odigo}
+%aca va el pseudocodigo del problema.
+\begin{algorithm}
+\begin{algorithmic}
+	\STATE input: $edificios$
+%	\STATE $eventos$ = parseEdificios($edificios$)
+	\WHILE{quedan edificios}
+		\IF{empieza edificio}
+			\STATE registro el edificio como abierto
+			\IF{altura del edificio es mayor a la del contorno}
+				\STATE agrego la altura del edificio al contorno
+			\ENDIF 
+		\ELSE
+			\STATE saco al edificio de los abiertos
+			\IF{este edificio le daba la altura al contorno}
+				\STATE agrego la altura del edificio abierto que le siga en altura al contorno
+			\ENDIF
+		\ENDIF
+	\ENDWHILE
+	
+	\RETURN contorno
+\end{algorithmic}
+\end{algorithm}
+
+\subsection{Demostraci\'on}
+%aca va la demostracion formal del problema refiriendonos al pseudocodigo o redefiniendo variables (definir todas las cosas de las que vamos a hablar).
+
+\subsection{An\'alisis de complejidad}
+%aca decimos cuanto cuesta cada parte del algoritmo y damos un valor final de la complejidad del algoritmo, ej O(logn).
+
+\subsection{Test de complejidad}
+%aca van los graficos y todos los testeos que hagamos para probar que en la practica el algoritmo cumple la complejidad que propusimos en el punto anterior
+
+\subsection{Testing}
+%aca ponermos todos nuestros casos bordes, como actua nuestro algoritmo en los casos particulares.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

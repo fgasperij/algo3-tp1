@@ -1,0 +1,42 @@
+\section{Problema 1: Puentes sobre lava caliente}
+
+\subsection{Presentaci\'on del problema}
+%aca ponemos una interpretacion de lo que nos pide el enunciado y algunas aclaraciones de como vamos a encarar el problema.
+
+\subsection{Resoluci\'on}
+\subsubsection{Algoritmo}
+%aca ponemos una descripcion de nuestro algorimtmo, presentamos la variables las estructuras y decimos que hacemos.
+
+\subsubsection{Pseudoc\'odigo}
+%aca va el pseudocodigo del problema.
+
+\subsection{Demostraci\'on}
+%aca va la demostracion formal del problema refiriendonos al pseudocodigo o redefiniendo variables (definir todas las cosas de las que vamos a hablar).
+Vamos a definir un salto como un entero natural mayor que 0 y menor que la cantidad de tablones que el participante actual puede saltar de a una sola vez.
+Nuestra implementacion recorre el puente dando saltos, garantizando que en cada salto, la distancia recorrida es m\'axima. Es decir, no existe otro salto tal que la distancia desde donde estamos parados es mayor a la del salto actual y el tabl\'on en el que caes no esta roto.\\
+$Distancia$ es un Nat $>$ 0. \\
+$Salto$ es Nat tal que $\forall s:Salto, s > 0 \wedge s \leq Distancia$
+ 
+Vamos a tratar de probar que dado una secuencia de saltos, si para cada salto $s$, $s$ es un "salto maximo" y si la sumatoria de saltos es mayor a la cantidad de tablones del puente, entonces nuestra secuencia es solucion del problema.
+
+Dada un Sec$<$Salto$>$ $se$.
+
+$(\forall i:Nat, i < se.long)(esMax(se_{i}) \wedge \sum_{j=0}^{se.long-1}se_{j} = puente.long)\implies$ \\ $\not\exists (se':Sec<Salto>) /
+se.long < se'.long \wedge \sum_{j=0}^{se'.long-1}se'_{j} \geq puente.long)$  //
+
+Llamemos a sMax a la secuencia de saltos maximos obtenida.
+Supongamos que existe secuencia s de saltos tal que la cantidad de elementos de s es menor a sMax y la sumatoria de saltos es igual o mayor a la cantidad de tablones.
+Bueno en particular, existe al menos un salto $s_{i}$, tal que $s_{i}$, es mayor a $sMax_{i}$,  ya que si todos los $s_{i}$, son menores a su correspondiente $sMax_{i}$,
+entonces la sumatoria de sMax es mayor que la sumatoria de s. (comprobar esto ad-hoc, probablemente sale por induccion).
+Bueno, supongamos que agarro el primero de todos los $s_{i}$, que es mas grande que su correspondiente $sMax_{i}$.
+Hasta ese momento las dos subsecuencias (desde el principio hasta el elemento i) pesan lo mismo, entonces $s_{i}$ esta parado en el mismo lugar y hace un salto mas grande que el salto maximo ($sMax_{i}$), lo cual es absurdo.
+Por lo tanto queda comprobado que ese $s_{i}$, no puede existir y la solucion es m\'axima.
+
+\subsection{An\'alisis de complejidad}
+%aca decimos cuanto cuesta cada parte del algoritmo y damos un valor final de la complejidad del algoritmo, ej O(logn).
+
+\subsection{Test de complejidad}
+%aca van los graficos y todos los testeos que hagamos para probar que en la practica el algoritmo cumple la complejidad que propusimos en el punto anterior
+
+\subsection{Testing}
+%aca ponermos todos nuestros casos bordes, como actua nuestro algoritmo en los casos particulares.
