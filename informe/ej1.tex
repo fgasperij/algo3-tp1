@@ -31,6 +31,51 @@ entonces la sumatoria de sMax es mayor que la sumatoria de s. (comprobar esto ad
 Bueno, supongamos que agarro el primero de todos los $s_{i}$, que es mas grande que su correspondiente $sMax_{i}$.
 Hasta ese momento las dos subsecuencias (desde el principio hasta el elemento i) pesan lo mismo, entonces $s_{i}$ esta parado en el mismo lugar y hace un salto mas grande que el salto maximo ($sMax_{i}$), lo cual es absurdo.
 Por lo tanto queda comprobado que ese $s_{i}$, no puede existir y la solucion es m\'axima.
+\\
+------------------------------------------------------------------------\\
+LIMPIADA DE CARA FER\\
+------------------------------------------------------------------------\\
+Definimos un salto $s$ como un natural mayor a 0 y menor o igual a la distancia 
+máxima que puede recorrer el participante, de sólo un salto, medida en tablones
+
+\begin{displaymath}
+	s \in Saltos \Leftrightarrow (s \in \mathbb{N}_{> 0} \land s \leq dist_{max})
+\end{displaymath}
+
+Definimos un puente como una función $p: \mathbb{N}_{>0} \to \mathbb{N}$ 
+\begin{displaymath}
+	p(i) = \begin{cases} 
+					1 &\mbox i \leq 0 \\ 
+					0 &\mbox i > \#tablones \\
+					0 &\mbox i > 0 \land i \leq \#tablones \land i \in Tablones \\
+					1 &\mbox i > 0 \land i \leq \#tablones \land i \notin Tablones \\
+				\end{cases} %\pmod{2}
+\end{displaymath}
+
+Para cada posición $i$ del puente definimos su salto máximo $s_{max}$ como 
+
+\begin{displaymath}
+	s_{max} = max \{n \in \mathbb{N}_{>0} \mid n \leq dist_{max} \land  \neg p(n)\}
+\end{displaymath}
+
+Nuestra implementacion recorre el puente dando saltos, garantizando que en cada salto, la distancia recorrida es m\'axima. Es decir, no existe otro salto tal que la distancia desde donde estamos parados es mayor a la del salto actual y el tabl\'on en el que caes no esta roto.\\
+$Distancia$ es un Nat $>$ 0. \\
+$Salto$ es Nat tal que $\forall s:Salto, s > 0 \wedge s \leq Distancia$
+ 
+Vamos a tratar de probar que dado una secuencia de saltos, si para cada salto $s$, $s$ es un "salto maximo" y si la sumatoria de saltos es mayor a la cantidad de tablones del puente, entonces nuestra secuencia es solucion del problema.
+
+Dada un Sec$<$Salto$>$ $se$.
+
+$(\forall i:Nat, i < se.long)(esMax(se_{i}) \wedge \sum_{j=0}^{se.long-1}se_{j} = puente.long)\implies$ \\ $\not\exists (se':Sec<Salto>) /
+se.long < se'.long \wedge \sum_{j=0}^{se'.long-1}se'_{j} \geq puente.long)$  //
+
+Llamemos a sMax a la secuencia de saltos maximos obtenida.
+Supongamos que existe secuencia s de saltos tal que la cantidad de elementos de s es menor a sMax y la sumatoria de saltos es igual o mayor a la cantidad de tablones.
+Bueno en particular, existe al menos un salto $s_{i}$, tal que $s_{i}$, es mayor a $sMax_{i}$,  ya que si todos los $s_{i}$, son menores a su correspondiente $sMax_{i}$,
+entonces la sumatoria de sMax es mayor que la sumatoria de s. (comprobar esto ad-hoc, probablemente sale por induccion).
+Bueno, supongamos que agarro el primero de todos los $s_{i}$, que es mas grande que su correspondiente $sMax_{i}$.
+Hasta ese momento las dos subsecuencias (desde el principio hasta el elemento i) pesan lo mismo, entonces $s_{i}$ esta parado en el mismo lugar y hace un salto mas grande que el salto maximo ($sMax_{i}$), lo cual es absurdo.
+Por lo tanto queda comprobado que ese $s_{i}$, no puede existir y la solucion es m\'axima.
 
 \subsection{An\'alisis de complejidad}
 %aca decimos cuanto cuesta cada parte del algoritmo y damos un valor final de la complejidad del algoritmo, ej O(logn).
