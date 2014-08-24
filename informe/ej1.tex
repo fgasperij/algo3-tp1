@@ -2,6 +2,10 @@
 
 \subsection{Presentaci\'on del problema}
 %aca ponemos una interpretacion de lo que nos pide el enunciado y algunas aclaraciones de como vamos a encarar el problema.
+Se quiere atravesar un puente con $n$ tablones dando saltos acotados por un valor de $x$ tablones. Se empieza afuera del puente y se pretende salir completamente de éste, es decir que como mínimo hay que saltar una vez (en el caso trivial de que $x > n$). La dificultad consiste en que ciertos tablones conocidos están rotos, y no pueden ser pisados. Lo que pide el problema es minimizar la cantidad de saltos para atravesar el puente, o aclarar que es imposible. Los puentes estarán definidos como $t_1$ $t_2$ $...$ $t_n$ donde $t_i = 0$ si el tablón está sano o $t_i = 1$ si está dañado. \\
+Por ejemplo, podríamos tener el puente 0 1 0 0 con un salto máximo igual a 2. Como se arranca afuera, saltar al primer tablón se considera como un salto de 1 tablón. En este caso no podemos saltar los dos tablones permitidos porque el segundo tablón está roto (el puente, usando $X$ para marcar donde estamos parados, se vería así: X 1 0 0). El segundo salto sí podremos saltar los 2 tablones, quedando 0 1 X 0, y con el tercer salto saldremos del puente. \\
+Una configuración más complicada podría ser el puente 0 0 1 0 0 0 1 1 0 0 para un salto máximo de 3 tablones, ya que ahora tenemos dos posibilidades: saltar al primer o al segundo tablón. Usaremos un algoritmo goloso para resolver el problema (saltar la mayor cantidad posible de tablones) y demostraremos que es correcto y que es la solución óptima para el problema.
+
 
 \subsection{Resoluci\'on}
 \subsubsection{Algoritmo}
@@ -9,7 +13,44 @@
 
 \subsubsection{Pseudoc\'odigo}
 %aca va el pseudocodigo del problema.
+\begin{algorithm}
+\begin{algorithmic}
+%\STATE input: vector$<$int$>$ puente, int maxSalto 
+%\STATE output: vector$<$int$>$ saltos
+\STATE int cantidadTablones $\gets |puente| - 2$ \textcolor{CadetBlue}{// El vector tiene dos tablones más: tanto el primero como el último se consideran fuera del puente}
+\STATE int actual $\gets 0$
+\STATE int proximo $\gets 0$
+\WHILE {actual $\leq$ cantidadTablones}
+    \STATE proximo $\gets$ calcularProximoTablon(puente, actual, maxSalto)
+    \IF {proximo $==$ $-1$}
+        \RETURN vector vacío
+    \ENDIF
+    \STATE introducirAlFinal(saltos, proximo)
+    \IF {proximo $>$ cantidadTablones}
+        \RETURN saltos
+    \ENDIF
+    \STATE actual $\gets$ proximo
+\ENDWHILE
+\caption{cruzarPuente(vector$<$int$>$ puente, int maxSalto ) $\rightarrow$ vector$<$int$>$ saltos}
+\end{algorithmic}
+\end{algorithm}
 
+\begin{algorithm}
+\begin{algorithmic}
+\STATE int cantidadTablones $\gets |puente| - 2$
+\WHILE {maxSalto $>$ 0}
+    \IF {actual $+$ maxSalto $>$ cantidadDeTablones}
+        \RETURN cantidadDeTablones $+$ 1
+    \ENDIF
+    \IF {puente$[$actual $+$ largoSalto$]$ $==$ 0}
+        \RETURN actual $+$ largoSalto
+    \ENDIF
+    \STATE maxSalto $\gets$ maxSalto $-$ 1
+\ENDWHILE
+\RETURN $-1$
+\caption{int calcularProximoTablon(vector$<$int$>$ puente, int actual, int maxSalto )}% $\rightarrow$ int proximo}
+\end{algorithmic}
+\end{algorithm}
 \subsection{Demostraci\'on}
 %aca va la demostracion formal del problema refiriendonos al pseudocodigo o redefiniendo variables (definir todas las cosas de las que vamos a hablar).
 Vamos a definir un salto como un entero natural mayor que 0 y menor que la cantidad de tablones que el participante actual puede saltar de a una sola vez.
