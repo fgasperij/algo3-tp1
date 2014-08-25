@@ -10,6 +10,18 @@ Una configuración más complicada podría ser el puente 0 0 1 0 0 0 1 1 0 0 par
 \subsection{Resoluci\'on}
 \subsubsection{Algoritmo}
 %aca ponemos una descripcion de nuestro algorimtmo, presentamos la variables las estructuras y decimos que hacemos.
+Dado este problema de optimización planteamos resolverlo con un algoritmo goloso, que consiste en seguir ''una heurística consistente para elegir la opción óptima en cada paso local con la esperanza de llegar a una solución general óptima'' [Cormen p.414 (Greedy Algorithms)].
+El problema a optimizar es encontrar la mínima cantidad de saltos para cruzar el puente, y la decisi\'on golosa o la opcion \'optima en cada paso local es elegir el tablon m\'as lejano que pueda alcanzar el participante de acuerdo al rango de salto que tenga. 
+
+El algoritmo recibe un vector con los tablones del puente (puente$[i]$) y un entero que representa el máximo salto que puede dar el participante (\textit{maxSalto}).
+
+Teniendo esa informaci\'on inicializamos la variable \textit{actual} y \textit{proximo} en $0$, que son enteros. La primera representa en que posici\'on del puente se ubica el participante y la segunda la posici\'on del salto m\'as lejano que puede alcanzar a un tablon.
+Estas variables son actualizadas por un ciclo, que en el caso que haya soluci\'on corre hasta que la posici\'on \textit{actual} sea mayor a la cantidad de tablones, es decir que el participante haya cruzado el puente.
+
+Dentro del ciclo, se calcula la variable \textit{proximo} con una funci\'on (\textit{calcularProximoTablon}) que recibe el \textit{puente} la posici\'on \textit{actual} y el \textit{maxSalto} y prueba desde el salto m\'as largo que puede dar hasta el m\'inimo cual es el pr\'oximo tablon \'optimo, si no existe, entonces devuelve una excepci\'on y hace que el algoritmo termine o en caso contrario el ciclo lo guarda en un vector de \textit{saltos}.
+\textit{Actual} se actualiza a la posici\'on \textit{proximo} en cada iteraci\'on que significa que el participante avanza en cada vuelta del ciclo.
+
+Una vez que termina el ciclo el algoritmo devuelve el arreglo de \textit{saltos}, que es vacio si no existe soluci\'on.
 
 \subsubsection{Pseudoc\'odigo}
 %aca va el pseudocodigo del problema.
@@ -42,8 +54,8 @@ Una configuración más complicada podría ser el puente 0 0 1 0 0 0 1 1 0 0 par
     \IF {actual $+$ maxSalto $>$ cantidadDeTablones}
         \RETURN cantidadDeTablones $+$ 1
     \ENDIF
-    \IF {puente$[$actual $+$ largoSalto$]$ $==$ 0}
-        \RETURN actual $+$ largoSalto
+    \IF {puente$[$actual $+$ maxSalto$]$ $==$ 1}
+        \RETURN actual $+$ maxSalto
     \ENDIF
     \STATE maxSalto $\gets$ maxSalto $-$ 1
 \ENDWHILE
