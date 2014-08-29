@@ -132,6 +132,25 @@ Por lo tanto queda comprobado que ese $s_{i}$, no puede existir y la solucion es
 
 \subsection{An\'alisis de complejidad}
 %aca decimos cuanto cuesta cada parte del algoritmo y damos un valor final de la complejidad del algoritmo, ej O(logn).
+El algoritmo \textit{cruzarPuentes} se puede dividir en dos partes:
+\begin{itemize}
+\item Inicialización
+\item Ciclo
+\end{itemize}
+
+En la Inicialización el algoritmo asigna 3 variables en $O(1)$, con lo cual su complejidad es $3*O(1) = O(1)$
+El ciclo, como peor caso, itera hasta $n$ veces, donde $n$ es la \textit{cantidadDeTablones}. Adentro del ciclo se calcula la función \textit{calcularProximoTablon} para cada iteración. Esta nos dice el índice del próximo tablón óptimo para saltar, y a su vez es otro ciclo que se repite $k$ veces haciendo una cantidad acotada de operaciones $O(1)$, donde $k$ es la variable de entrada \textit{maxsalto} que es un valor acotado.
+Luego el ciclo continua haciendo asignaciones y condicionales y devoluciones en $O(1)$.
+
+Haciendo el calculo de complejidad obtenemos:
+
+$O($\textit(cruzarPuentas)$) = 3*O(1) + n(O(k))$
+
+Que es lo mismo que:
+
+$O($\textit(cruzarPuentas)$) = O(n*k)$
+
+Podemos ver que el algoritmo depende de $k$, es decir, del \textit{maxsalto} del participante, con lo cual podemos considerar que tiene una complejidad pseudopolinomial ya que depende de una variable de entrada, pero como sabemos que $k$ es acotado por una constante finalmente podemos concluir que es de orden $O(n)$.
 
 \subsection{Test de complejidad}
 %aca van los graficos y todos los testeos que hagamos para probar que en la practica el algoritmo cumple la complejidad que propusimos en el punto anterior
