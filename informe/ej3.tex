@@ -15,7 +15,7 @@ Definimos la estructura Camión que usaremos como contenedor de los productos co
 \begin{align*}
 Camion \: es \: tupla<peligrosidad : nat, productos : conjunto(nat)>
 \end{align*}
-La clave está en la función de backtracking %$bt(producto : nat, camiones : lista<Camion>, mejorTemp : lista<Camion>, umbral : nat, n : nat)$
+La clave está en la función de backtracking
 \begin{align*}
 bt(p : nat, camiones : lista<Camion>, mejorTemp : lista<Camion>, M : nat, n : nat)
 \end{align*}
@@ -32,6 +32,32 @@ La primera llamada a la función $bt$ se hace con el producto $1$, $camiones$ ti
 
 \subsubsection{Pseudoc\'odigo}
 %aca va el pseudocodigo del problema.
+\begin{algorithm}[H]
+\begin{algorithmic}[1]
+\caption{bt(p : nat, camiones : lista$<$Camion$>$, mejorTemp : lista$<$Camion$>$, M : nat, n : nat)}
+\IF {p $==$ n \AND camiones.size() $<$ mejorTemp.size()}
+	\STATE mejorTemp $\leftarrow$ camiones
+    \RETURN
+\ENDIF
+\IF {p $==$ n}
+	\RETURN
+\ENDIF
+\FOR {j $\leftarrow$ 0 \TO j $\leftarrow$ camiones.size() $-$ 1}
+	\STATE \textcolor{CadetBlue}{// agregarNoSuperaUmbral(p, camion, M) devuelve \textbf{true} si el producto $p$ puede agregarse al $camion$ sin superar el umbral de peligrosidad $M$}
+	\IF {agregarNoSuperaUmbral(p, camiones$[$j$]$, M)} 
+		\STATE peligrosidadPrevia $\leftarrow$ agregarProducto(p, camiones$[$j$]$) \textcolor{CadetBlue}{// Esto agrega el producto y devuelve la peligrosidad previa a agregar éste}
+		\STATE bt(p $+$ 1, camiones, mejorTemp, M, n)
+		\STATE sacarProducto(p, camiones$[$j$]$, peligrosidadPrevia) \textcolor{CadetBlue}{// Quita el producto del camión y pone la peligrosidad previa para evitar recalcularla}
+	\ENDIF
+\ENDFOR
+\IF {camiones.size() $<$ mejorTemp.size() $-$ 1}
+	\STATE camiones.push\_back(Camion(p))
+	\STATE bt(p $+$ 1, camiones, mejorTemp, M, n)
+	\STATE camiones.pop\_back()
+\ENDIF
+\RETURN
+\end{algorithmic}
+\end{algorithm}
 
 \subsection{Demostraci\'on} %OPCIONAL
 %aca va la demostracion formal del problema refiriendonos al pseudocodigo o redefiniendo variables (definir todas las cosas de las que vamos a hablar).
