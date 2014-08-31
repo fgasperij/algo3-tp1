@@ -2,10 +2,33 @@
 
 \subsection{Presentaci\'on del problema}
 %aca ponemos una interpretacion de lo que nos pide el enunciado y algunas aclaraciones de como vamos a encarar el problema.
+Tenemos una cantidad $n$ de productos químicos que deseamos repartir en la menor cantidad de camiones posible, con la particularidad de que no se supere un umbral $M$ de peligrosidad, el cual tenemos definido para cada par de productos. Entonces, la peligrosidad para un camión $C$ está dada por
+\begin{align*}
+peligrosidadCamion(C) = \sum\limits_{\substack{p_i,p_j \in C \\ i < j}} peligrosidadEntreProductos(p_i,p_j)
+\end{align*}
+Resolveremos este problema usando un algoritmo de backtracking implementando podas para reducir la complejidad temporal.
 
 \subsection{Resoluci\'on}
 \subsubsection{Algoritmo}
-%aca ponemos una descripcion de nuestro algorimtmo, presentamos la variables las estructuras y decimos que hacemos.
+%aca ponemos una descripcion de nuestro algoritmo, presentamos la variables las estructuras y decimos que hacemos.
+Definimos la estructura Camión que usaremos como contenedor de los productos como
+\begin{align*}
+Camion \: es \: tupla<peligrosidad : nat, productos : conjunto(nat)>
+\end{align*}
+La clave está en la función de backtracking %$bt(producto : nat, camiones : lista<Camion>, mejorTemp : lista<Camion>, umbral : nat, n : nat)$
+\begin{align*}
+bt(p : nat, camiones : lista<Camion>, mejorTemp : lista<Camion>, M : nat, n : nat)
+\end{align*}
+donde $p$ es el i-ésimo producto a repartir, $camiones$ es la lista actual de camiones (esto se pasa por referencia), $mejorTemp$ es la mejor solución hasta el momento (también se pasa por referencia), $M$ es la máxima peligrosidad permitida por camión, y $n$ es la cantidad de productos.
+Dados los parámetros, lo que hace es lo siguiente: 
+\begin{itemize}
+\item Si ya se introdujeron todos los productos ($p = n$), salgo, pero si además la lista de camiones es más chica que la mejor solución temporal, la pongo como mejor solución.
+\item Para cada camión en $camiones$, intento agregar a $p$. Si puedo hacerlo, llamo a \textit{bt(p+1,~camiones,~mejorTemp,~M,~n)}, e inmediatamente saco el producto del camión (ya que si se llegó acá es que terminó la rama de la llamada a $bt$, y en la próxima iteración del ciclo se intentará poner el producto en el próximo camión si hay alguno).
+\item Si se llega acá significa que el producto no pudo meterse en ningún camión, entonces antes de agregar un camión nuevo y meter al producto ahí, calculamos si haciendo éso estamos empatando la cantidad de camiones que tiene nuestra mejor solución temporal. Si fuera así, no tiene sentido seguir. Si no, se agrega un camión con el $p$ adentro, se llama a \textit{bt(p+1,~camiones,~mejorTemp,~M,~n)}, e inmediatamente se saca al camión que habíamos agregado (ya que aquí ya terminamos de recorrer esa rama del árbol de backtracking)
+\item Llegado acá, la función simplemente termina.
+\end{itemize}
+La primera llamada a la función $bt$ se hace con el producto $1$, $camiones$ tiene un camión con el producto $0$, y siendo $mejorTemp$ la solución trivial de $n$ camiones con un producto en cada uno.
+
 
 \subsubsection{Pseudoc\'odigo}
 %aca va el pseudocodigo del problema.
