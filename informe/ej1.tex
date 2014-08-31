@@ -25,8 +25,8 @@ Una vez que termina el ciclo el algoritmo devuelve el arreglo de \textit{saltos}
 
 \subsubsection{Pseudoc\'odigo}
 %aca va el pseudocodigo del problema.
-\begin{algorithm}
-\begin{algorithmic}
+\begin{algorithm}[H]
+\begin{algorithmic}[1]
 %\STATE input: vector$<$int$>$ puente, int maxSalto 
 %\STATE output: vector$<$int$>$ saltos
 \STATE int cantidadTablones $\gets |puente| - 2$ \textcolor{CadetBlue}{// El vector tiene dos tablones más: tanto el primero como el último se consideran fuera del puente}
@@ -47,14 +47,14 @@ Una vez que termina el ciclo el algoritmo devuelve el arreglo de \textit{saltos}
 \end{algorithmic}
 \end{algorithm}
 
-\begin{algorithm}
-\begin{algorithmic}
+\begin{algorithm}[H]
+\begin{algorithmic}[1]
 \STATE int cantidadTablones $\gets |puente| - 2$
 \WHILE {maxSalto $>$ 0}
     \IF {actual $+$ maxSalto $>$ cantidadDeTablones}
         \RETURN cantidadDeTablones $+$ 1
     \ENDIF
-    \IF {puente$[$actual $+$ maxSalto$]$ $==$ 1}
+    \IF {puente$[$actual $+$ maxSalto$]$ $==$ 0}
         \RETURN actual $+$ maxSalto
     \ENDIF
     \STATE maxSalto $\gets$ maxSalto $-$ 1
