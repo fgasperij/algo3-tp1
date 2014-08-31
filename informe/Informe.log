@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2014.8.30)  30 AUG 2014 20:47
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2014.8.30)  30 AUG 2014 21:06
 entering extended mode
  %&-line parsing enabled.
 **Informe.tex
@@ -1119,56 +1119,60 @@ Package xcolor Warning: Incompatible color definition on input line 32.
 
 Package hyperref Info: bookmark level for unknown algorithm defaults to 0 on in
 put line 46.
-[4] [5] [6] [7]) [8] (./ej2.tex
-<p1_ej1_pre.jpg, id=230, 602.25pt x 451.6875pt>
+[4] [5] [6]) [7] (./ej2.tex <p1_ej1_pre.jpg, id=226, 602.25pt x 451.6875pt>
 File: p1_ej1_pre.jpg Graphic file (type jpg)
- <use p1_ej1_pre.jpg>
-<p1_ej2_pre.jpg, id=231, 602.25pt x 451.6875pt>
+
+<use p1_ej1_pre.jpg> <p1_ej2_pre.jpg, id=227, 602.25pt x 451.6875pt>
 File: p1_ej2_pre.jpg Graphic file (type jpg)
- <use p1_ej2_pre.jpg>
+
+<use p1_ej2_pre.jpg>
 Overfull \hbox (2.43332pt too wide) in paragraph at lines 7--19
 [][] [] 
  []
 
-<p1_ej1_post.jpg, id=232, 602.25pt x 451.6875pt>
+<p1_ej1_post.jpg, id=228, 602.25pt x 451.6875pt>
 File: p1_ej1_post.jpg Graphic file (type jpg)
  <use p1_ej1_post.jpg>
-<p1_ej2_post.jpg, id=233, 602.25pt x 451.6875pt>
+<p1_ej2_post.jpg, id=229, 602.25pt x 451.6875pt>
 File: p1_ej2_post.jpg Graphic file (type jpg)
  <use p1_ej2_post.jpg>
 Overfull \hbox (2.43332pt too wide) in paragraph at lines 24--36
 [][] [] 
  []
 
-[9 <./p1_ej1_pre.jpg> <./p1_ej2_pre.jpg> <./p1_ej1_post.jpg> <./p1_ej2_post.jpg
->]) [10] (./ej3.tex) [11]
+[8 <./p1_ej1_pre.jpg> <./p1_ej2_pre.jpg> <./p1_ej1_post.jpg> <./p1_ej2_post.jpg
+>]) [9] (./ej3.tex) [10]
 No file Informe.bbl.
-(./Informe.aux) ) 
+(./Informe.aux)
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
+ ) 
 Here is how much of TeX's memory you used:
- 19735 strings out of 495061
- 322643 string characters out of 1182621
- 441070 words of memory out of 3000000
- 22405 multiletter control sequences out of 15000+50000
+ 19731 strings out of 495061
+ 322591 string characters out of 1182621
+ 443070 words of memory out of 3000000
+ 22402 multiletter control sequences out of 15000+50000
  12722 words of font info for 50 fonts, out of 3000000 for 9000
  28 hyphenation exceptions out of 8191
  56i,13n,55p,647b,740s stack positions out of 5000i,500n,10000p,200000b,50000s
-</usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmbx1
-0.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr
-/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texm
-f-texlive/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texmf-texlive/f
-onts/type1/public/amsfonts/cm/cmmi8.pfb></usr/share/texmf-texlive/fonts/type1/p
-ublic/amsfonts/cm/cmr10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfon
-ts/cm/cmr12.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr8.p
-fb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmss10.pfb></usr/sh
-are/texmf-texlive/fonts/type1/public/amsfonts/cm/cmssbx10.pfb></usr/share/texmf
--texlive/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texmf-texlive/fo
-nts/type1/public/amsfonts/cm/cmsy6.pfb></usr/share/texmf-texlive/fonts/type1/pu
-blic/amsfonts/cm/cmsy8.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfont
-s/cm/cmti10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmtt10
-.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on Informe.pdf (11 pages, 702695 bytes).
+</usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/sha
+re/texmf-texlive/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/texmf-te
+xlive/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texmf-texlive/fonts
+/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texmf-texlive/fonts/type1/publ
+ic/amsfonts/cm/cmmi8.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/
+cm/cmr10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr12.pfb
+></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/
+texmf-texlive/fonts/type1/public/amsfonts/cm/cmss10.pfb></usr/share/texmf-texli
+ve/fonts/type1/public/amsfonts/cm/cmssbx10.pfb></usr/share/texmf-texlive/fonts/
+type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texmf-texlive/fonts/type1/publi
+c/amsfonts/cm/cmsy6.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/c
+m/cmsy8.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmti10.pfb
+></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmtt10.pfb></usr/shar
+e/texmf-texlive/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
+Output written on Informe.pdf (10 pages, 699454 bytes).
 PDF statistics:
- 335 PDF objects out of 1000 (max. 8388607)
- 93 named destinations out of 1000 (max. 500000)
+ 331 PDF objects out of 1000 (max. 8388607)
+ 92 named destinations out of 1000 (max. 500000)
  259 words of extra memory for PDF output out of 10000 (max. 10000000)
 

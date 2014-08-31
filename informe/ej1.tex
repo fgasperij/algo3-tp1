@@ -77,9 +77,6 @@ se.long < se'.long \wedge \sum_{j=0}^{se'.long-1}se'_{j} \geq puente.long)$
 Para probar esto, vamos a utilizar la definici\'on can\'onica de demostraci\'on de correctitud para algoritmos greedy, dada en clase por la c\'atedra. Un algoritmo goloso, puede plantearse como el siguiente esquema:
 %comentar introduction to algorithim
 
-Para probar esto, vamos a utilizar la definici\'on can\'onica de demostraci\'on de correctitud para algoritmos greedy, dada en clase por la c\'atedra. Un algoritmo goloso, puede plantearse como el siguiente esquema:
-%comentar introduction to algorithim
-
 \begin{algorithm}
 \begin{algorithmic}
 %\STATE input: S, F, P 
@@ -147,8 +144,14 @@ Si $Y_{2} \leq X_{2}$ entonces todo el intervalo cubierto por Y, estaria inclu\'
 Si $Y_{2} > X_{2}$ entonces yo se que X,Y no pueden estar en la misma soluci\'on(se superponen). Pero se que Y pertenece a alguna soluci\'on. Veamos que existe un intervalo que cubre X, pero no Y que seria el intervalo I = [$X_{1}$,$Y_{2}$].
 Bueno pero como X contiene a todo este intervalo, existe una solucion que contiene al salto $S_{Y}$ = ($X_{1}$,$Y_{2}$). Asi que dado un soluci\'on que contiene a Y, al menos contiene un salto m\'as en ese intervalo.
 Luego dado el intervalo I'=[$X_{2}$,$Y_{2}$], como X se superpone con Y, $X_{2}$ $>$ $Y_{1}$, por lo tanto existe un salto $S_{X}$ que con componentes ($X_{2}$,$Y_{2}$).
-Luego si analizamos las dos sub-soluciones contienen al mismo intervalo en dos saltos, por lo que si existe una soluci\'on para que contiene a Y, existe una soluci\'on que contenga a X.  
+Luego si analizamos las dos sub-soluciones contienen al mismo intervalo en dos saltos, por lo que si existe una soluci\'on para que contiene a Y, existe una soluci\'on que contenga a X. 
 
+Con esto queda comprobado 3).
+
+Finalmente, si S $== \emptyset$ entonces no hay mas saltos, por lo tanto nuestra $S^{opt}$ recorre todo el puente.
+Tenemos $S^{opt}$  que sabemos es una sub-soluci\'on de $S^{*}$. Y si $S^{opt}$ ya recorrio todo el puente, no hace falta agregarle ning\'un salto, por lo tanto $S^{opt} =S^{*}$.  
+
+Con esto queda comprobado 4).
 %MAXI
 \\
 ------------------------------------------------------------------------\\
