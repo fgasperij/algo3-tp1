@@ -109,7 +109,7 @@ Luego para garantizar la correctitud del mismo hay que garantizar 4 puntos:
 Bueno para probar estos 4 puntos, primero vamos a definir F, S y P.
 
 
-S es un multiconjunto de los saltos que uno puede dar representados por los pares (x,y) de tal que el representa un salto desde la posicion x hasta la posicion y con 0$<$ y-x$\leq$salto m\'ax.
+S es un conjunto de los saltos que uno puede dar representados por los pares (x,y) de tal que el representa un salto desde la posicion x hasta la posicion y con 0$<$ y-x$\leq$salto m\'ax.
 F es una funci\'on selecciona de S el par con mayor diferencia (y - x) y menor coordenada x.
 P($S^{opt}$,X) devuelve TRUE cuando el tabl\'on donde cae X no esta roto y cuando el salto no se superpone con un salto anterior.
 %Puente[$\sum_{i=0}^{S^{opt}.long}S^{opt}_{j}$ + X] $==$ 0 
@@ -218,6 +218,15 @@ $O($\textit{cruzarPuentes}$) = 3*O(1) + n(O(k))$
 Que es lo mismo que:
 
 $O($\textit{cruzarPuentes}$) = O(n*k)$
+
+%esto de decir que el algoritmo depende de k, yo no lo pondria porque sino nos van a decir que no es O(n) como pidieron ellos.
+
+Entonces por cada paso que da, el algoritmo calcula hasta k tablones para saber cual es el pr\'oximo que no este roto m\'aximo, pero con la particularidad que calcula primero el mas lejano, por lo tanto dado un salto de longitud k':Nat, k'$\leq$ k, el pr\'oximo salto S, va a tener que ser mayor o igual a k - k', ya que sino S caeria en un tabl\'on roto.
+Esto sucede por k' esta acotado por los tablones que est\'an rotos.
+Por ejemplo, suponiendo un k = 10. Dentro de un intervalo de tablones de 10 elementos, el tabl\'on 10, 9 y 8 est\'an rotos. Por lo tanto k' = 7. Entonces vemos que los tablones rotos por arriba son los que acotan a k', luego el pr\'oximo salto debe ser mayor a 3. Y si itera mas de k - k' veces, el puente no tiene soluci\'on.
+Esto lo que implica que dado cualquier k, el algoritmo siempre va a recorrer a lo sumo N elementos dentro del puente. El peor caso seria k=1.
+Finalmente podemos concluir que es de orden $O(n)$.
+
 
 Podemos ver que el algoritmo depende de $k$, es decir, del \textit{maxsalto} del participante, con lo cual podemos considerar que tiene una complejidad pseudopolinomial ya que depende de una variable de entrada, pero como sabemos que $k$ es acotado por una constante finalmente podemos concluir que es de orden $O(n)$.
 
