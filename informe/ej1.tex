@@ -25,8 +25,8 @@ Una vez que termina el ciclo el algoritmo devuelve el arreglo de \textit{saltos}
 
 \subsubsection{Pseudoc\'odigo}
 %aca va el pseudocodigo del problema.
-\begin{algorithm}
-\begin{algorithmic}
+\begin{algorithm}[H]
+\begin{algorithmic}[1]
 %\STATE input: vector$<$int$>$ puente, int maxSalto 
 %\STATE output: vector$<$int$>$ saltos
 \STATE int cantidadTablones $\gets |puente| - 2$ \textcolor{CadetBlue}{// El vector tiene dos tablones más: tanto el primero como el último se consideran fuera del puente}
@@ -47,14 +47,14 @@ Una vez que termina el ciclo el algoritmo devuelve el arreglo de \textit{saltos}
 \end{algorithmic}
 \end{algorithm}
 
-\begin{algorithm}
-\begin{algorithmic}
+\begin{algorithm}[H]
+\begin{algorithmic}[1]
 \STATE int cantidadTablones $\gets |puente| - 2$
 \WHILE {maxSalto $>$ 0}
     \IF {actual $+$ maxSalto $>$ cantidadDeTablones}
         \RETURN cantidadDeTablones $+$ 1
     \ENDIF
-    \IF {puente$[$actual $+$ maxSalto$]$ $==$ 1}
+    \IF {puente$[$actual $+$ maxSalto$]$ $==$ 0}
         \RETURN actual $+$ maxSalto
     \ENDIF
     \STATE maxSalto $\gets$ maxSalto $-$ 1
@@ -74,27 +74,84 @@ Dada un Sec$<$Salto$>$ $se$.
 $(\forall i:Nat, i < se.long)(esMax(se_{i}) \wedge \sum_{j=0}^{se.long-1}se_{j} = puente.long)\implies$ \\ $\not\exists (se':Sec<Salto>) /
 se.long < se'.long \wedge \sum_{j=0}^{se'.long-1}se'_{j} \geq puente.long)$  
 
-Llamemos a sMax a la secuencia de saltos maximos obtenida.
+Para probar esto, vamos a utilizar la definici\'on can\'onica de demostraci\'on de correctitud para algoritmos greedy, dada en clase por la c\'atedra. Un algoritmo goloso, puede plantearse como el siguiente esquema:
+%comentar introduction to algorithim
 
-Primero veamos que si existe una secuencia de saltos maximos, es unica.
-Esto es f\'acil de ver ya que, supongamos que existe otra secuencia s distinta de saltos maximos. Bueno, me paro en el primer salto $s_{i}$ tal que $s_{i}$ es distinto de $sMax_{i}$. 
+\begin{algorithm}
+\begin{algorithmic}
+%\STATE input: S, F, P 
+%\STATE output: S
+\STATE $S^{opt}$ $=$ $\emptyset$
+\WHILE {S $!=$ $\emptyset$}	
+    \STATE X = $f(S)$
+    \STATE S = $S - {X}$
+    \IF {p($S^{opt}$,X)}
+    \STATE $S^{opt} = S^{opt} \cup$ ${X}$   
+    \ENDIF         
+\ENDWHILE
+\RETURN $S^{opt}$
+\end{algorithmic}
+\end{algorithm}
 
-Entonces: 
+Luego para garantizar la correctitud del mismo hay que garantizar 4 puntos:
 
-si $s_{i}$ $<$ $sMax_{i}$ $\implies$ $s_{i}$ no es m\'aximo, asi que s no es una secuencia de saltos m\'aximos.
+%comentar que esta sacada de la clase practica del dia xxxxxxx.
+%esto deberia estar con indices, no con numeros cabeza
 
-si $s_{i}$ $>$ $sMax_{i}$ $\implies$ $sMax_{i}$ no es m\'aximo lo cual es absurdo.
+1) Definimos una noci\'on de lo que significa ser “sub-soluci\'on” de una soluci\'on.
 
-Ahora veamos que dado una secuencia $s$ y un salto $s_{i}$,  (i:Nat, i $<s.long$ y una posicion ($p$:Nat, $p$ $= \sum_{j=0}^{i-1}s_{j}$), yo puedo "maximizar" ese salto, y esto no me agrega elementos a $s$ y me mantiene la distancia recorrida por ese secuencia, donde maxisimizar un salto significa remplazarlo por el salto mas largo que puede hacerse desde la posicion $p$ en la que esta parado y la distancia recorrida por una secuencia $s$ es $\sum_{j=0}^{s.long-1}s_{j}$
+2) Probar que $S^{opt}$ empieza siendo sub-soluci\'on de alguna soluci\'on \'optima.
 
-Llamemos $m_{p}$:Salto, al salto m\'aximo que podemos hacer desde la posici\'on $p$. $m_{p}$ no puede ser menor a $s_{i}$ ya que no seria m\'aximo, si $m_{p}$ fuera igual no agregaria saltos a la secuencia $s$. Ahora veamos que si el caso es que $m_{p}$ $>$ $s_{i}$ entonces para los $s_{j}$, $(j:Nat, i < j < s.long)$ que se solapen con $m_{p}$, sucede que si $s_{j}$ + $s_{i}$ $<$ $m_{p}$ $\implies$ borro a $s_{j}$ lo cual me saca un salto (Si fueran m\'as de uno, sacar\'ia m\'as de uno) . 
+3) Probar que si  $S^{opt}$ es sub-soluci\'on de alguna soluci\'on \'optima al iniciar 	una iteraci\'on del ciclo, entonces al terminar  esa iteraci\'on, $S^{opt}$ sigue siendo una subsoluci\'on de alguna soluci\'on \'optima.
 
-Ahora si $s_{j}$ + $s_{i}$ $>$ $m_{p}$ $\wedge$ $m_{p}$ $>$ $s_{i}$ $\implies$ reemplazo a $s_{j}$ por $s_{j}$ - $m_{p}$ + $s_{i}$, y la secuencia me queda igual.
-Por lo tanto dada cualquier secuencia s, maxisimizar($s_{i}$) y obtener la nueva secuencia s' $\implies$ s.long $\geq$ s'.long.
+4) Probar que cuando S $== \emptyset$, $S^{opt}$ es una soluci\'on \'optima.
 
-Bueno y ahora, supongamos que yo tengo una secuencia $s$ que es soluci\'on del problema. Si yo maximizo cada salto de $s$, a partir de la posicion 0, obtengo una secuencia de saltos maximos que tiene igual cantidad de elementos que $s$ y todos los saltos son m\'aximos. Como todos los saltos son m\'aximos esa secuencia es una secuencia de saltos m\'aximos la cual habiamos llamado a sMax.
+Bueno para probar estos 4 puntos, primero vamos a definir F, S y P.
 
-Y como sMax es \'unica vemos que sMax tiene la misma o menor cantidad de elementos que $s$ y recorre la misma distancia. Como $s$ es soluci\'on, no puede exisitir una secuencia con menos elementos y igual o mayor distancia recorrida. Por lo tanto sMax tiene la misma cantidad de elementos que s y es soluci\'on.
+
+S es un conjunto de los saltos que uno puede dar representados por los pares (x,y) de tal que el representa un salto desde la posicion x hasta la posicion y con 0$<$ y-x$\leq$salto m\'ax.
+F es una funci\'on selecciona de S el par con mayor diferencia (y - x) y menor coordenada x.
+P($S^{opt}$,X) devuelve TRUE cuando el tabl\'on donde cae X no esta roto y cuando el salto no se superpone con un salto anterior.
+%Puente[$\sum_{i=0}^{S^{opt}.long}S^{opt}_{j}$ + X] $==$ 0 
+%Donde Puente es el array de tablones, donde un tabl\'on esta sano si su valor es 0.
+Vamos a definir ser sub-soluci\'on como ser el prefijo de una soluci\'on cuando ordenamos por orden de saltos.
+Como la cantidad de saltos que puede darse en un puente es finita, va existir al menos un m\'aximo local y vamos a poder asignarle un cardinal. Entonces como existe al menos un conjunto de saltos de cardinal \'optimo, el conjunto $\emptyset$ empieza siendo sub-soluci\'on de ese conjunto.
+Con esto queda comprobado 1) y 2).
+
+Dado $S^{opt}$ sub-soluci\'on al principio del ciclo, queremos garantizar que $S^{opt}$ es sub-soluci\'on al finalizarlo.
+Supongamos que $S^{opt}$ es sub-soluci\'on de $S^{*}$ al principio del ciclo.
+Bueno si a $S^{opt}$ no le agrego nada, sigue siendo una subsolucio\'on.
+Si el caso es en el que agrego X, quiero ver que eso sigue siendo alguna sub-soluci\'on para alg\'un $S'^{*}$. En particular queremos ver que $S'^{*}$ $\subset$ $S^{*}$. 
+Si agregamos X, es el caso en donde P dio true, por lo tanto X cae en un tabl\'on que no esta roto y el salto no se superpone con uno anterior.
+Adem\'as X era el m\'aximo de los saltos posibles y de menor coordenada x obtenido por F.
+Bueno, si X $\in$ $S^{*}$, entonces podemos tomar $S'^{*}$ = $S^{*}$, asi que veamos el caso en que X $\notin$ $S^{*}$.
+
+Ahora tomemos $S'^{*}$ = $S^{*}$ $\cup$ ${X}$
+Este conjunto puede tener elementos que se superponen, si no los tiene entonces 
+$S'^{*}$ es sub-soluci\'on.
+Si los tiene, y ordenamos por orden de salto (primera coordenada) , $S'^{*}$ no puede superponerse con $S^{opt}$ ya que $S^{opt}$ era sub-soluci\'on de $S^{*}$.
+Por lo tanto si existe un elemento que se superponga, se superponen con X.
+Sea Y un elemento que se superpone con X.
+Sean $Y_{1},Y_{2},X_{1},X_{2}$ las componentes de Y,X respectivamente.
+$Y_{1}\geq X_{2}$ ya que sino X no tenia la primera componente m\'inima.
+
+Si $Y_{1} = X_{1}$ entonces $X_{2} \geq Y_{2}$ ya que sino F hubiera agarrado primero a Y. Por lo tanto yo podria tomar $S'^{*}$ = $S^{*}$ $\cup$ ${X}$ - ${Y}$ y eso seguiria siendo sub-soluci\'on.
+
+Si $Y_{1} > X_{1}$ entonces hay dos casos:
+
+Si $Y_{2} \leq X_{2}$ entonces todo el intervalo cubierto por Y, estaria inclu\'ido en el intervalo cubierto por X, y en el intervalo I = [$X_{1},Y_{1}$], I $\neq \emptyset$ habr\'ia que cubrirlo con un salto por lo tanto $S^{*}$ no ser\'ia subsoluci\'on.
+
+Si $Y_{2} > X_{2}$ entonces yo se que X,Y no pueden estar en la misma soluci\'on(se superponen). Pero se que Y pertenece a alguna soluci\'on. Veamos que existe un intervalo que cubre X, pero no Y que seria el intervalo I = [$X_{1}$,$Y_{2}$].
+Bueno pero como X contiene a todo este intervalo, existe una solucion que contiene al salto $S_{Y}$ = ($X_{1}$,$Y_{2}$). Asi que dado un soluci\'on que contiene a Y, al menos contiene un salto m\'as en ese intervalo.
+Luego dado el intervalo I'=[$X_{2}$,$Y_{2}$], como X se superpone con Y, $X_{2}$ $>$ $Y_{1}$, por lo tanto existe un salto $S_{X}$ que con componentes ($X_{2}$,$Y_{2}$).
+Luego si analizamos las dos sub-soluciones contienen al mismo intervalo en dos saltos, por lo que si existe una soluci\'on para que contiene a Y, existe una soluci\'on que contenga a X. 
+
+Con esto queda comprobado 3).
+
+Finalmente, si S $== \emptyset$ entonces no hay mas saltos, por lo tanto nuestra $S^{opt}$ recorre todo el puente.
+Tenemos $S^{opt}$  que sabemos es una sub-soluci\'on de $S^{*}$. Y si $S^{opt}$ ya recorrio todo el puente, no hace falta agregarle ning\'un salto, por lo tanto $S^{opt} =S^{*}$.  
+
+Con esto queda comprobado 4).
 %MAXI
 \\
 ------------------------------------------------------------------------\\
@@ -161,6 +218,15 @@ $O($\textit{cruzarPuentes}$) = 3*O(1) + n(O(k))$
 Que es lo mismo que:
 
 $O($\textit{cruzarPuentes}$) = O(n*k)$
+
+%esto de decir que el algoritmo depende de k, yo no lo pondria porque sino nos van a decir que no es O(n) como pidieron ellos.
+
+Entonces por cada paso que da, el algoritmo calcula hasta k tablones para saber cual es el pr\'oximo que no este roto m\'aximo, pero con la particularidad que calcula primero el mas lejano, por lo tanto dado un salto de longitud k':Nat, k'$\leq$ k, el pr\'oximo salto S, va a tener que ser mayor o igual a k - k', ya que sino S caeria en un tabl\'on roto.
+Esto sucede por k' esta acotado por los tablones que est\'an rotos.
+Por ejemplo, suponiendo un k = 10. Dentro de un intervalo de tablones de 10 elementos, el tabl\'on 10, 9 y 8 est\'an rotos. Por lo tanto k' = 7. Entonces vemos que los tablones rotos por arriba son los que acotan a k', luego el pr\'oximo salto debe ser mayor a 3. Y si itera mas de k - k' veces, el puente no tiene soluci\'on.
+Esto lo que implica que dado cualquier k, el algoritmo siempre va a recorrer a lo sumo N elementos dentro del puente. El peor caso seria k=1.
+Finalmente podemos concluir que es de orden $O(n)$.
+
 
 Podemos ver que el algoritmo depende de $k$, es decir, del \textit{maxsalto} del participante, con lo cual podemos considerar que tiene una complejidad pseudopolinomial ya que depende de una variable de entrada, pero como sabemos que $k$ es acotado por una constante finalmente podemos concluir que es de orden $O(n)$.
 

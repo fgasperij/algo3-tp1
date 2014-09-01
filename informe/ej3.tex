@@ -2,19 +2,104 @@
 
 \subsection{Presentaci\'on del problema}
 %aca ponemos una interpretacion de lo que nos pide el enunciado y algunas aclaraciones de como vamos a encarar el problema.
+Tenemos una cantidad $n$ de productos químicos que deseamos repartir en la menor cantidad de camiones posible, con la particularidad de que no se supere un umbral $M$ de peligrosidad, el cual tenemos definido para cada par de productos. Entonces, la peligrosidad para un camión $C$ está dada por
+\begin{align*}
+peligrosidadCamion(C) = \sum\limits_{\substack{p_i,p_j \in C \\ i < j}} peligrosidadEntreProductos(p_i,p_j)
+\end{align*}
+Resolveremos este problema usando un algoritmo de backtracking implementando podas para reducir la complejidad temporal.
 
 \subsection{Resoluci\'on}
 \subsubsection{Algoritmo}
-%aca ponemos una descripcion de nuestro algorimtmo, presentamos la variables las estructuras y decimos que hacemos.
+%aca ponemos una descripcion de nuestro algoritmo, presentamos la variables las estructuras y decimos que hacemos.
+Definimos la estructura Camión que usaremos como contenedor de los productos como
+\begin{align*}
+Camion \: es \: tupla<peligrosidad : nat, productos : conjunto(nat)>
+\end{align*}
+La clave está en la función de backtracking
+\begin{align*}
+bt(p : nat, camiones : vector<Camion>, mejorTemp : vector<Camion>, M : nat, n : nat)
+\end{align*}
+donde $p$ es el i-ésimo producto a repartir, $camiones$ es la vector actual de camiones (esto se pasa por referencia), $mejorTemp$ es la mejor solución hasta el momento (también se pasa por referencia), $M$ es la máxima peligrosidad permitida por camión, y $n$ es la cantidad de productos. $vector$ es la representación de la estructura de la STL de C++ $std::vector$, que a los efectos del pseudocódigo es un array redimensionable (cuando se supera el límite, se duplica su tamaño y se copian los elementos al nuevo array).
+Dados los parámetros, lo que hace es lo siguiente: 
+\begin{itemize}
+\item Si ya se introdujeron todos los productos ($p = n$), salgo, pero si además la vector de camiones es más chica que la mejor solución temporal, la pongo como mejor solución.
+\item Para cada camión en $camiones$, intento agregar a $p$. Si puedo hacerlo, llamo a \textit{bt(p+1,~camiones,~mejorTemp,~M,~n)}, e inmediatamente saco el producto del camión (ya que si se llegó acá es que terminó la rama de la llamada a $bt$, y en la próxima iteración del ciclo se intentará poner el producto en el próximo camión si hay alguno).
+\item Si se llega acá significa que el producto no pudo meterse en ningún camión, entonces antes de agregar un camión nuevo y meter al producto ahí, calculamos si haciendo éso estamos empatando la cantidad de camiones que tiene nuestra mejor solución temporal. Si fuera así, no tiene sentido seguir. Si no, se agrega un camión con el $p$ adentro, se llama a \textit{bt(p+1,~camiones,~mejorTemp,~M,~n)}, e inmediatamente se saca al camión que habíamos agregado (ya que aquí ya terminamos de recorrer esa rama del árbol de backtracking)
+\item Llegado acá, la función simplemente termina.
+\end{itemize}
+La primera llamada a la función $bt$ se hace con el producto $1$, $camiones$ tiene un camión con el producto $0$, y siendo $mejorTemp$ la solución trivial de $n$ camiones con un producto en cada uno.
+
 
 \subsubsection{Pseudoc\'odigo}
 %aca va el pseudocodigo del problema.
+\begin{algorithm}[H]
+\begin{algorithmic}[1]
+\caption{bt(p : nat, camiones : vector$<$Camion$>$, mejorTemp : vector$<$Camion$>$, M : nat, n : nat)}
+\IF {p $==$ n \AND camiones.size() $<$ mejorTemp.size()}
+	\STATE mejorTemp $\leftarrow$ camiones
+    \RETURN
+\ENDIF
+\IF {p $==$ n}
+	\RETURN
+\ENDIF
+\FOR {j $\leftarrow$ 0 \TO j $\leftarrow$ camiones.size() $-$ 1}
+	\STATE \textcolor{CadetBlue}{// agregarNoSuperaUmbral(p, camion, M) devuelve \textbf{true} si el producto $p$ puede agregarse al $camion$ sin superar el umbral de peligrosidad $M$}
+	\IF {agregarNoSuperaUmbral(p, camiones$[$j$]$, M)} 
+		\STATE peligrosidadPrevia $\leftarrow$ agregarProducto(p, camiones$[$j$]$) \textcolor{CadetBlue}{// Esto agrega el producto y devuelve la peligrosidad previa a agregar éste}
+		\STATE bt(p $+$ 1, camiones, mejorTemp, M, n)
+		\STATE sacarProducto(p, camiones$[$j$]$, peligrosidadPrevia) \textcolor{CadetBlue}{// Quita el producto del camión y pone la peligrosidad previa para evitar recalcularla}
+	\ENDIF
+\ENDFOR
+\IF {camiones.size() $<$ mejorTemp.size() $-$ 1}
+	\STATE camiones.push\_back(Camion(p))
+	\STATE bt(p $+$ 1, camiones, mejorTemp, M, n)
+	\STATE camiones.pop\_back()
+\ENDIF
+\RETURN
+\end{algorithmic}
+\end{algorithm}
 
-\subsection{Demostraci\'on} %OPCIONAL
+\begin{algorithm}[H]
+\begin{algorithmic}[1]
+\caption{agregarNoSuperaUmbral(p : nat, camion : Camion, M : nat) : bool}
+\STATE acumPeligrosidad $\leftarrow$ camion.peligrosidad
+\FOR {\textbf{each} producto $\in$ camion.productos}
+	\STATE acumPeligrosidad $+=$ peligrosidades$[$p$][$producto$]$ \textcolor{CadetBlue}{// $peligrosidades$ es una matriz de n x n con las peligrosidades para cada par de productos}
+	\IF {acumPeligrosidad $>$ M}
+		\RETURN \FALSE
+	\ENDIF
+\ENDFOR
+\RETURN \TRUE
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]
+\begin{algorithmic}[1]
+\caption{sacarProducto(p : nat, camion : Camion, peligrosidadPrevia : nat)}
+\STATE camion.productos.erase(p)
+\STATE camion.peligrosidad $\leftarrow$ peligrosidadPrevia
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]
+\begin{algorithmic}[1]
+\caption{agregarProducto(p : nat, camion : Camion) : nat}
+\STATE peligrosidadPrevia $\leftarrow$ camion.peligrosidad
+\FOR {\textbf{each} producto $\in$ camion.productos}
+	\STATE camion.peligrosidad $+=$ peligrosidades$[$p$][$producto$]$
+\ENDFOR
+\STATE camion.productos.insert(p);
+\RETURN peligrosidadPrevia
+\end{algorithmic}
+\end{algorithm}
+
+
+%\subsection{Demostraci\'on} %OPCIONAL
 %aca va la demostracion formal del problema refiriendonos al pseudocodigo o redefiniendo variables (definir todas las cosas de las que vamos a hablar).
 
 \subsection{An\'alisis de complejidad}
 %aca decimos cuanto cuesta cada parte del algoritmo y damos un valor final de la complejidad del algoritmo, ej O(logn).
+
 
 \subsection{Test de complejidad}
 %aca van los graficos y todos los testeos que hagamos para probar que en la practica el algoritmo cumple la complejidad que propusimos en el punto anterior
