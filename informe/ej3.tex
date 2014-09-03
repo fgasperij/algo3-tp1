@@ -75,14 +75,6 @@ La primera llamada a la función $bt$ se hace con el producto $1$, $camiones$ ti
 
 \begin{algorithm}[H]
 \begin{algorithmic}[1]
-\caption{sacarProducto(p : nat, camion : Camion, peligrosidadPrevia : nat)}
-\STATE camion.productos.erase(p)
-\STATE camion.peligrosidad $\leftarrow$ peligrosidadPrevia
-\end{algorithmic}
-\end{algorithm}
-
-\begin{algorithm}[H]
-\begin{algorithmic}[1]
 \caption{agregarProducto(p : nat, camion : Camion) : nat}
 \STATE peligrosidadPrevia $\leftarrow$ camion.peligrosidad
 \FOR {\textbf{each} producto $\in$ camion.productos}
@@ -93,16 +85,72 @@ La primera llamada a la función $bt$ se hace con el producto $1$, $camiones$ ti
 \end{algorithmic}
 \end{algorithm}
 
+\begin{algorithm}[H]
+\begin{algorithmic}[1]
+\caption{sacarProducto(p : nat, camion : Camion, peligrosidadPrevia : nat)}
+\STATE camion.productos.erase(p)
+\STATE camion.peligrosidad $\leftarrow$ peligrosidadPrevia
+\end{algorithmic}
+\end{algorithm}
+
 
 %\subsection{Demostraci\'on} %OPCIONAL
 %aca va la demostracion formal del problema refiriendonos al pseudocodigo o redefiniendo variables (definir todas las cosas de las que vamos a hablar).
 
 \subsection{An\'alisis de complejidad}
 %aca decimos cuanto cuesta cada parte del algoritmo y damos un valor final de la complejidad del algoritmo, ej O(logn).
-
+Empecemos analizando la complejidad temporal de peor caso de las funciones auxiliares que utiliza el algoritmo. Sea $n$ la cantidad de productos, y $M$ la máxima peligrosidad permitida en un camión:
+\begin{itemize}
+	\item \textbf{sacarProducto} es O(log $|$camion.productos$|$) pues lo único que hace es modificar un variable entera, lo cual es O(1), y borrar un elemento del conjunto de productos del camión, lo cual es O(log $|$camion.productos$|$) ya que estamos representando al set de la STL.
+	\item \textbf{agregarProducto} es O($|$camion.productos$|$) ya que se suman las peligrosidades entre el producto pasado por parámetro y los que ya están en el camión, lo cual es O($|$camion.productos$|$), y se inserta en el conjunto de productos, lo cual es O(log $|$camion.productos$|$).
+	\item \textbf{agregarNoSuperaUmbral} es similar a la anterior, hace un ciclo sobre los productos del camión, acumulando las peligrosidades y hace un chequeo entre enteros, en total es O($|$camion.productos$|$).
+\end{itemize}
+Para la complejidad de \textbf{bt} vamos a necesitar un análisis más detallado. La función es llamada con un camión ya con el primer producto adentro, entonces el segundo producto va a tener dos posibilidades: o entrar a ese camión, o ir en un camión aparte. En el peor caso, se va a llamar recursivamente a \textbf{bt} para ambas configuraciones. Es decir, si $i$ es la cantidad de productos sin repartir,  $k$ es la cantidad de camiones actual, y $c_j$ es la cantidad de productos en el j-ésimo camión:
+\begin{align*}
+T(i,k) = \left(\sum\limits_{\substack{j = 1}}^k O(c_j) + T(i-1,k)\right) + O(1) + T(i-1,k+1) + O(1)
+\end{align*}
+Dentro de la suma está la complejidad de cada iteración del ciclo que recorre los camiones, siempre haremos \textbf{agregarNoSuperaUmbral} que es $O(c_j)$ y en el peor caso se llama a \textbf{agregarProducto} (de nuevo $O(c_j)$) y hará la recursión con un producto menos; luego se hace \textbf{sacarProducto} que es $O(\log c_j)$. Como la suma de los productos de todos los camiones es la cantidad de productos ya repartidos, podemos acotar $\sum\limits_{\substack{j = 1}}^k c_j$ con $n-i$. Fuera de la sumatoria tenemos el costo de agregar un camión nuevo, llamar recursivamente con un producto menos y un camión más (con el elemento que le pusimos), y de sacar el camión agregado. Sacar y poner un camión en un array redimensionable tiene una complejidad amortizada de O(1). Entonces, queda:
+\begin{align*}
+T(i,k) = O(n-i+1) + k \times T(i-1,k) + T(i-1,k+1)
+\end{align*}
+El problema de esta ecuación es que es difícil ver la complejidad con respecto a la cantidad $n$ de productos iniciales. Sabemos que nuestro algoritmo se comporta así: para el primer producto, solamente llama a \textbf{bt} una vez, ya que hay un solo camión, y por lo tanto una sola posibilidad; en cambio, para el segundo producto hay dos: o lo mete en el primer camión, o lo mete en uno nuevo; y ahora tenemos dos configuraciones para el producto 3, y cinco posibilidades. Sabemos que en todo momento no puede haber más camiones que productos ya repartidos, entonces podemos acotar $k$ inferiormente con $n-i$. Así, podemos definir:
+\begin{align*}
+T(i) &= O(n-i+1) + (n-i) \times T(i-1) + T(i-1) \text{ y entonces queda: } \\
+T(i) &= O(n-i+1) + (n-i+1) \times T(i-1) \\
+\text{ Evaluando en n: } \\
+T(n) &= O(1) + T(n-1) \\
+T(n) &= O(1) + O(2) + 2 \times T(n-2) \\
+T(n) &= O(1) + O(2) + 2 \times O(3) + 2 \times 3 \times T(n-3) \\
+T(n) &= O(1) + O(2) + O(2 \times 3) + O(2 \times 3 \times 4) + 2 \times 3 \times 4 \times T(n-4) \\
+\vdots \\
+T(n) &= O\left(\sum\limits_{\substack{i = 1}}^n i!\right) + O(n!)
+\end{align*}
+Por lo tanto, la complejidad temporal de peor caso es $O\left(\sum\limits_{\substack{i = 1}}^n i!\right)$.
+%Veamos como sería el cálculo para nuestro algoritmo. Empezamos con $n-1$ y $k = 1$:
+%\begin{align*}
+%T(n-1,1) = O(n-1) + 1 \times T(n-2,1) + T(n-2,2) \\
+%T(n-2,1) = O(n-2) + 1 \times T(n-3,1) + T(n-3,2) \\
+%T(n-2,2) = O(n-2) + 2 \times T(n-3,2) + T(n-3,3)
+%\end{align*}
+%Entonces
+%\begin{align*}
+%T(n-1,1) &= O(n-1) + 2 \times O(n-2) + T(n-3,1) + 2 \times T(n-3,2) + T(n-3,3) \\
+%T(n-3,1) &= O(n-3) + 1 \times T(n-4,1) + T(n-4,2) \\
+%T(n-3,2) &= O(n-3) + 2 \times T(n-4,2) + T(n-4,3) \\
+%T(n-3,3) &= O(n-3) + 3 \times T(n-4,3) + T(n-4,4)
+%\end{align*}
+%Y queda
+%\begin{align*}
+%T(n-1,1) = O(n-1) + 2 \times O(n-2) + 4 \times O(n-3) + T(n-4,1) + \\ + 3 \times T(n-4,2) + 3 \times T(n-4,3) + T(n-4,4)
+%\end{align*}
+%T(n-4,1) = O(n-4) + T(n-5,1) + T(n-5,2)
+%T(n-4,2) = O(n-4) + 2 * T(n-5,2) + T(n-5,3)
+%T(n-4,3) = O(n-4) + 3 * T(n-5,3) + T(n-5,4)
+%T(n-4,4) = O(n-4) + 4 * T(n-5,4) + T(n-5,5)
+%entonces T(n-1,1) = O(n-1) + 2*O(n-2) + 4*O(n-3) + 8*O(n-4) + T(n-5,1) + T(n-5,2) + 3*2*T(n-5,2) + 3*T(n-5,3) + 3*3*T(n-5,3)+ 3*T(n-5,4) + 4*T(n-5,4) + T(n-5,5) = O(n-1) + 2*O(n-2) + 4*O(n-3) + 8*O(n-4) + T(1) + 7*T(2) + 12*T(3) + 7*T(4) + T(5)
 
 \subsection{Test de complejidad}
 %aca van los graficos y todos los testeos que hagamos para probar que en la practica el algoritmo cumple la complejidad que propusimos en el punto anterior
 
-\subsection{Testing}
+%\subsection{Testing}
 %aca ponermos todos nuestros casos bordes, como actua nuestro algoritmo en los casos particulares.
