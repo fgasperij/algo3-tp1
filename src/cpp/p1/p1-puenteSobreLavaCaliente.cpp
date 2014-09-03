@@ -1,5 +1,6 @@
 // g++ p1-puenteSobreLavaCaliente.cpp -o p1
-// ./p1 < cat puente1.txt  
+// ./p1 < puente1.txt  
+// cat archivoConTests | ./p1 > a.output 
 #include <vector>
 #include <assert.h>
 #include <iostream>
