@@ -1,7 +1,3 @@
-// g++ p2-horizontesLejanos.cpp -o p2
-// ./p2 < horizontes1.txt
-#include <iostream>
-#include <assert.h>
 #include <set>
 #include <vector>
 #include <algorithm>
@@ -122,11 +118,16 @@ vector<Evento> generarEventos(const vector<Edificio> &edificios)
 
 bool comparar_eventos_por_x(const Evento &a, const Evento &b)
 {
-    // si tienen el mismo x desempata el tipo
-    // los que empiezan tienen prioridad para ya tenerlos en el set
-    // de abiertos
-    if (a.x == b.x)
-        return (a.empieza() ? true : false);
+    if (a.x == b.x) {
+        if (a.empieza() != b.empieza()) // distinto tipo => gana el de apertura
+          return a.empieza();
+
+        if (a.empieza()) { // son los dos de apertura
+          return a.h > b.h;
+        } else {           // son los dos de cierre
+          return a.h < b.h;
+        }
+    }
     
     return a.x < b.x;
 }

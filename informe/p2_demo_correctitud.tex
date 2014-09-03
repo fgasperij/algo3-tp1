@@ -1,22 +1,23 @@
 \paragraph{Edificio}
-Definiremos un edificio $e$ como una tupla $<e_{principio}, e_{final}, e_{altura}>$ que escribiremos de la siguiente forma por ser más compacta $<e_p, e_f, e_h>$ que cumple la siguiente propiedad:
+Definiremos un edificio $e$ como una tupla $<e_{principio}$, $e_{final}$, $e_{altura}>$, la escribiremos de la siguiente forma por ser más compacta $<e_p$, $e_f$, $e_h>$, que cumple la siguiente propiedad:
 \begin{displaymath}
 	e_p, e_f, e_h \in \mathbb{N} \land e_p > 0 \land e_p < e_f \land e_h > 0
 \end{displaymath}
-Representa a un edificio $e$ que empieza en $e_p$, tiene una altura de $e_h$ y termina en $e_f$.
+La misma representa a un edificio $e$ que empieza en $e_p$, tiene una altura de $e_h$ y termina en $e_f$. 
+Representados bidimensionalmente sobre un eje cartesiano los valores $e_p$ y $e_f$ se corresponden con
+sus coordenadas sobre el eje de las abscisas $X$.
 
 \paragraph{Evento}
-Definiremos un evento como una tupla $<ev_x, ev_h, ev_t>$ que cumple la siguiente propiedad:
+Definiremos un evento como una tupla $<ev_x$, $ev_h$, $ev_t>$ que cumple la siguiente propiedad:
 \begin{displaymath}
-	ev_x, ev_h, ev_t \in \mathbb{N} \land ev_t \in \{ 0, 1\}
+	ev_x, ev_h, ev_t \in \mathbb{N} \land ev_t \in \{ abrir, cerrar\}
 \end{displaymath}
 $ev_x$ representa el valor de la coordenada $x$ del evento, $ev_h$ la altura del evento y $ev_t$ el tipo de 
-evento, 1 para abrir y 0 para cerrar.
-Dado un edificio $e = <e_p, e_f, e_h>$  diremos que representa dos eventos $ev^1 = <e_p, e_h, 1>$ y $ev^2 = <e_f, e_h, 0>$.
+evento.
+Dado un edificio $e = <e_p$, $e_f$, $e_h>$  diremos que dos eventos lo representan $ev_{abrir} = <e_p$, $e_h$, $abrir>$ y $ev_{cerrar} = <e_f$, $e_h$, $cerrar>$.
 Es decir, que cada edificio lo representamos con dos eventos, uno que marca el comienzo y otro que marca el fin del mismo. 
 Dado un conjunto $E$ de edificios decimos que el conjunto $Ev$ de eventos que lo representa es aquel que contiene dos eventos
 por cada edificio de $E$ derivados de la forma antes mostrada.
-(TODO insertar gráfico que ejemplifique)
 
 \paragraph{Contorno}
 Dado un conjunto de edificios $E$ definiremos una función $h$ que toma un $x \in \mathbb{N}$ y un conjunto de edificios:
@@ -35,31 +36,37 @@ conjunto de edificios $E$:
 \begin{displaymath}
 	C = \{ p = (x_p, y_p) | h(x_p - 1, E) \neq h(x_p, E) \land (\exists ev \in Ev | ev_x = x_p \land ev_h = y_p) \}
 \end{displaymath}
+Es decir, los puntos que pertenezcan al conjunto $contorno$ registrarán los cambios de altura. Cada punto
+del contorno puede interpretarse como: a partir de este $p_x^i$ y hasta el $p_x^{i+1}$ el edificio con mayor
+altura en todo el rango tiene altura igual a $p_y^i$ (asumiendo que los $p^i$ del contorno están ordenados
+de forma creciente por su coordenada $x$). Los cambios de altura pueden producirse
+porque un edificio empiece o porque un edificio haya concluido. 
 Dado un conjunto de edificios $E$ existe un único conjunto $C$ que representa su contorno. 
 Vale la pena aclarar que por como está planteado el problema la función $h$ nos dice que si tenemos un conjunto $E$
 de edificios que sólo contiene un edificio $e = <e_p, e_f, e_h>$ entonces $h(e_p, E) = e_h$ pero $h(e_f, E) = 0$.
 
 \paragraph{Algoritmo} 
-A continuación se presenta el pseudocódigo de la nuestra implementación sobre el cual plantearemos la
+A continuación se presenta el pseudocódigo de nuestra implementación sobre el cual plantearemos la
 demostración de correctitud:
 
 \begin{algorithm}[H]
 \begin{algorithmic}
-\STATE $abiertos$ $\gets$ $\emptyset$
+\STATE $eventos$ $\gets$ extraer\_eventos($edificios$)
+\STATE $abiertos$ $\gets$ $\emptyset$			// permite elementos repetidos
 \STATE $h_{actual}$ $\gets$ 0
 \WHILE {$eventos$ $\neq$ $\emptyset$}
 	\STATE $ev$ $\gets$ proximo\_evento($eventos$)
-	\IF {$ev_t$}
-		\STATE Agregar($ev_h$, $abiertos$)
+	\IF {abre($ev$)}
+		\STATE Agregar($abiertos$, $ev_h$)
 		\IF {$h_{actual}$ $<$ $ev_h$}
 			\STATE $h_{actual}$ $\gets$ $ev_h$
-			\STATE Agregar($<ev_x, ev_h>, contornoParcial$)
+			\STATE Agregar($<ev_x, ev_h>$, $contornoParcial$)
 		\ENDIF
 	\ELSE
-		\STATE $abiertos$ - $\{ ev_h \}$
+		\STATE Sacar($abiertos$, $ev_h$)			// quita una sola repetición del elemento
 		\IF {$h_{actual}$ = $ev_h$ $\land$ max($abiertos$) $<$ $h_{actual}$}
 			\STATE $h_{actual}$ = max($abiertos$)
-			\STATE Agregar($<ev_x, h_{actual}>, contornoParcial$)  
+			\STATE Agregar($<ev_x, h_{actual}>$, $contornoParcial$)  
 		\ENDIF
 	\ENDIF
 \ENDWHILE
@@ -69,7 +76,7 @@ demostración de correctitud:
 
 \begin{algorithm}[H]
 \begin{algorithmic}
-	\STATE $min_x$ = min( $\{ x | ev \in eventos  \land x = ev_x \}$ )
+	\STATE $min_x$ = min( $\{ ev_x | ev \in eventos\}$ )
 	\STATE $comparten\_min_x$ = $\{ ev \in eventos | ev_x = min_x \}$
 	\IF {quedanEventosDeApertura($comparten\_min_x$)}
 		\STATE $comparten\_min_x$ = filtrarLosDeCierre($comparten\_min_x$)
