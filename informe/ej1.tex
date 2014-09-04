@@ -158,6 +158,7 @@ Tenemos $S^{opt}$  que sabemos es una sub-soluci\'on de $S^{*}$. Y si $S^{opt}$ 
 Con esto queda comprobado 4).
 %MAXI
 \\
+
 ------------------------------------------------------------------------\\
 LIMPIADA DE CARA FER\\
 ------------------------------------------------------------------------\\
@@ -225,6 +226,7 @@ $O($\textit{cruzarPuentes}$) = O(n*k)$
 
 %esto de decir que el algoritmo depende de k, yo no lo pondria porque sino nos van a decir que no es O(n) como pidieron ellos.
 
+\label{an}
 Entonces por cada paso que da, el algoritmo calcula hasta k tablones para saber cual es el pr\'oximo que no este roto m\'aximo, pero con la particularidad que calcula primero el mas lejano, por lo tanto dado un salto de longitud k':Nat, k'$\leq$ k, el pr\'oximo salto S, va a tener que ser mayor o igual a k - k', ya que sino S caeria en un tabl\'on roto.
 Esto sucede porque k' esta acotado por los tablones que est\'an rotos.
 Por ejemplo, suponiendo un k = 10. Dentro de un intervalo de tablones de 10 elementos, el tabl\'on 10, 9 y 8 est\'an rotos. Por lo tanto k' = 7. Entonces vemos que los tablones rotos por arriba son los que acotan a k', luego el pr\'oximo salto debe ser mayor a 3. Y si se itera mas de k - k' veces, el puente no tiene soluci\'on.
@@ -237,5 +239,154 @@ Podemos ver que el algoritmo depende de $k$, es decir, del \textit{maxsalto} del
 \subsection{Test de complejidad}
 %aca van los graficos y todos los testeos que hagamos para probar que en la practica el algoritmo cumple la complejidad que propusimos en el punto anterior
 
+Para analizar y testear la complejidad del algoritmo implementado para la resoluci\'on del problema puentes colgantes realizamos los siguientes testeos:
+
+\begin{itemize}
+  \item Test de casos de tamaño fijo.
+  \item Test de entrada al procesador.
+  \item Test de analisis de peor caso.
+\end{itemize}
+
+\newpage
+
+
+
+\subsubsection{Test de casos de tamaño fijo}
+
+
+Para el test de complejidad utilizamos un algoritmo que genera un array de boolean aleatorios dado un k:Nat, tal que el largo del array es de tamaño k.
+
+Luego generamos m:Nat arrays aleatorios de tamaño k. Dado un array $a$ se construye un puente $p$ el cual consta de los mismos elementos que el array aleatorio. 
+
+$(\forall i:Nat, i < a.length)(a_{i} == p_{i})$
+
+Luego se llama al algoritmo que obtiene la soluci\'on para ese puente.
+
+Los tiempos medidos son a partir de que se llama al constructor del puente, y hasta despu\'es del llamado a nuestro algoritmo soluci\'on.
+
+Para el test de casos de tamaño fijo, lo que usamos fue dadas las variables 
+
+puenteMax:Nat, saltoMax:Nat, step:Nat, $cantidadDeIteraciones$:Nat. 
+
+Vamos a iterar desde (i$=$step;i$<$puenteMax;i+=step), vamos a hacer $cantidadDeIteraciones$ instancias de puente y luego llamar al algoritmo de resoluci\'on con el procedimiento descrito arriba.
+
+Luego dado un tiempo $T_{i}$ siendo este el promedio de todas las corridas de tamaño i, vamos a realizar un analisis de la complejidad obtenida.
+
+Para el salto s:Nat que va a poder dar cada participante en cada instancia de puente tambien es n\'umero aleatorio tal que
+
+saltoMax:Nat, s $\leq$ saltoMax $\wedge$ saltoMax $<<$ i.
+
+El siguiente gr\'afico muestra el crecimiento del $T_{i}$ en funci\'on de i, es decir el crecimiento del tiempo en funci\'on del crecimiento de elementos.
+Los valores utilizados para la generaci\'on del grafico son:
+
+\newpage
+
+$cantidadDeIteraciones$ $=$ 100 step $=$ 50000 puenteMax $=$ 500000000 saltoMax = 10
+
+\begin{figure}[ht]
+	\begin{minipage}[t]{\linewidth}
+		\centering
+		\includegraphics[width=\textwidth]{grafico_de_n_fijo.jpg}
+	\end{minipage}	
+\end{figure}
+
+Como se puede apreciar la complejidad as\'intotica temporal en este caso, es lineal en el tamaño de la entrada.
+
+
+\newpage
+\subsubsection{Test de entrada al procesador}
+
+El objetivo de este test era correr un test similar al test de tamaño fijo pero evitando los outlayers que pudiera generar el momento de entrada del problema al microprocesador. 
+
+Para ello, lo que se implemento, fue correr una misma instancia de puente k veces y tomar ahora el promedio de esas k corridas similares, realizando el mismo proceso que en el test de tamaño fijo. Luego analizar en un gr\'afico la complejidad temporal de este test.
+
+Los valores utilizados para la generaci\'on de este gr\'afico son:
+
+$cantidadDeIteraciones$ $=$ 10 step $=$ 500000 puenteMax $=$ 500000000 saltoMax = 10 
+
+k $=$ 10
+
+
+\begin{figure}[ht]
+	\begin{minipage}[t]{\linewidth}
+		\centering
+		\includegraphics[width=\textwidth]{grafico_de_entrada_al_procesador.jpg}
+	\end{minipage}	
+\end{figure}
+
+Como se puede apreciar la complejidad as\'intotica temporal en este caso, tambi\'en es lineal en el tamaño de la entrada.
+
+
+\subsubsection{Test de peor-mejor caso}
+
+Por lo analizado en demostraci\'on de correctitud, el peor caso va a ser cuando el salto m\'aximo s de un participante es s $=$ 1. Ya que este caso, de tener soluci\'on un puente p, se deber\'ia recorrer todos los tablones de p.
+
+Luego la complejidad es exactamente N.
+
+Los mejores casos ser\'ian lo que el salto m\'aximo s de un participante dado un puente p.
+
+s $\geq$ p.largo
+
+Ya que todo puente que el participante pueda saltar de un solo salto, tiene soluci\'on y nuestra implementaci\'on la haya en O(1).
+
+\newpage
+
+ 
 \subsection{Testing}
 %aca ponermos todos nuestros casos bordes, como actua nuestro algoritmo en los casos particulares.
+
+Para analizar y testear la correctitud del algoritmo implementado para la resoluci\'on del problema puentes colgantes realizamos los siguientes testeos:
+
+\begin{itemize}
+  \item Test de casos bordes.
+  \item Test de archivos est\'aticos.
+  \item Test de an\'alisis de input-output.
+  \item Test de analisis generador de casos.
+\end{itemize}
+
+\subsubsection{Test de casos bordes}
+
+Para los casos bordes de nuestro algoritmo elegimos correr una bater\'ia de test los cuales simulan casos at\'ipicos.
+Los siguientes test fueron implementados:
+Dado un puente p y participante con salto m\'aximo m.
+
+\begin{itemize}
+  \item TestConPuenteConTamanio0() $=$ Chequea soluci\'on para p.largo $=$ 0.
+  \item 	TestConSaltoMaximo0() $=$ Chequea soluci\'on para s $=$ 0.
+  \item TestConSaltoMaximoMayorAPuente(); Chequea soluci\'on para s $\geq$ p.largo 
+  \item testConPuenteNegativo(); $=$ Chequea soluci\'on para p.largo $\leq$ 0
+  \item testConSaltoNegativo(); $=$ Chequea soluci\'on para s $\leq$ 0
+\end{itemize}
+
+\subsubsection{Test de archivos est\'aticos}
+
+El objetivo de este test era probar la correctitud de nuestra implementaci\'on a partir de un archivo est\'atico de entrada y un archivo est\'atico de salida.
+Estos archivos est\'atico de entrada y salida se los puede encontar en el directorio del programa bajo el nombre de "puentes-estatico.txt" para la entrada y "solucion-estatica" para la salida.
+
+%hay que ponerle algunos casos mas a estos archivos%
+
+\subsubsection{Test de an\'alisis de input-output}
+
+El objetivo de este test era probar la correctitud del algoritmo de entrada de datos.
+Se buscaba corroborar que la implementaci\'on correspondiera dada un archivo de entrada a la de un puente ya instanciado por el programa.
+Para ello se genero un caso de test, el cual dado un puente creado aleatoriamente, crea un archivo de texto similar a los de entrada de la c\'atedra, con este puente. 
+
+Luego se llamo con ese archivo a nuestra implementaci\'on de input, corroborando que la salida de este m\'etodo fuera similar a la de una llamada con el puente ya instanciado.
+
+El test corre con k entradas de puentes generadas aleatoriamente.
+
+\subsubsection{Test generador de casos}
+
+El objetivo de este test es corroborar que dado un puente p, generado aleatoriamente y dada la solucion s. Corroborar que efectivamente si el algoritmo no devuelve soluci\'on entonces efectivamente no existe tal, y si la devuelve entonces s es soluci\'on del problema.
+
+Para probar que no existe una soluci\'on para un puente p, vamos a aprovecharnos de una caracteristica de los puentes sin soluci\'on.
+
+Para todo puente p sin soluci\'on dado un participante con salto m\'aximo m , existe un intervalo de tablones $p_{i}$,$p_{j}$ tal que para todo tabl\'on t dentro de ese intervalo, t est\'a roto.
+La comprobaci\'on informal de este enunciado es que si no existies ese intervalo, el participante siempre podria dar saltos al intervalo de tablones rotos que tiene adelante. Por lo tanto podr\'ia saltar por todo el puente.
+
+Entonces dado un puente sin soluci\'on se chequea efectivamente que existe al menos un intervalo.
+
+Para corroborar que una s efectivamente es soluci\'on de p, vamos a iterar por los tablones de s y chequear en p, que estos no esten rotos.
+Si bien esto no nos garantiza que s sea optima, nos garantiza que sea soluci\'on.
+
+Una mejora para estos test ser\'ia encontrar una caracter\'istica de s, tal que no asegure que es \'optima. Para ello, podr\'iamos generarnos por fuerza bruta todas las secuencias de saltos posibles y agarrar las que sean soluci\'on y garantizar que nuestra s es mejor o igual que todas las dem\'as.
