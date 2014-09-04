@@ -1,0 +1,20 @@
+Para calcular la complejidad del algoritmo que implementamos primero debemos
+explicar cómo resolvimos en la implementación el cáculo de maxAbierto($x$) con
+una estructuras de datos conveniente que nos permite realizar todas las
+operaciones necesarias sin superar la cota de complejidad requerida.
+Contamos con un Multiconjunto, que llamaremos $abiertos$, que nos provee la
+siguiente interfaz:
+\begin{itemize}
+	\item inserción: $O(log n)$
+	\item borrado: $O(log n)$
+	\item obtención del máximo: $O(log n)$
+\end{itemize}
+utilizaremos esta estructura de forma tal que calcular la función maxAbierto($x$)
+sea equivalente a obtener el máximo de este multiconjunto. Para ello debemos
+mantenerlo actualizado, esto implica que en cada iteración si el evento es de tipo
+apertura lo agregamos a $abiertos$ (costo O($log n$)). 
+
+La complejidad de este algoritmo puede calcularse como:
+\begin{displaymath}
+	O(extraer_eventos) + \#eventos * O(proximo_evento) + 
+\end{displaymath}
