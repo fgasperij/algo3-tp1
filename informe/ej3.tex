@@ -145,9 +145,9 @@ ln(n!) &= n \times ln(n) - n + O(ln(n))
 \end{align*}
 Por lo tanto, a partir de algún $n$ vale que 
 \begin{align*}
-ln(n \times n!) \approx ln(n) + n \times ln(n) - n
+ln(n \times n!) \approx ln(n) + n \times ln(n) - n = (n+1) ln(n) - n
 \end{align*}
-En el próximo gráfico ploteamos, para $n$ $=$ cantidad de productos, $t_n$ $=$ tiempo promedio para n productos, la función $f(n) = \frac{ln(t_n)}{ln(n) + n \times ln(n) - n}$ lo cual a partir de algún $n$ debería ser constante. En efecto:
+En el próximo gráfico ploteamos, para $n$ $=$ cantidad de productos, $t_n$ $=$ tiempo promedio para n productos, la función $f(n) = \frac{ln(t_n)}{(n+1) ln(n) - n}$ lo cual a partir de algún $n$ debería ser constante. En efecto:
 
 \begin{figure}[H]
 	\begin{minipage}[t]{\linewidth}
