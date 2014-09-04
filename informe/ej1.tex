@@ -67,12 +67,15 @@ Una vez que termina el ciclo el algoritmo devuelve el arreglo de \textit{saltos}
 %aca va la demostracion formal del problema refiriendonos al pseudocodigo o redefiniendo variables (definir todas las cosas de las que vamos a hablar).
 %MAXI
 
-Vamos a tratar de probar que dado una secuencia de saltos, si para cada salto $s$, $s$ es un "salto maximo" y si la sumatoria de saltos es mayor a la cantidad de tablones del puente, entonces nuestra secuencia es solucion del problema.
+Vamos a tratar de probar que dado una secuencia de saltos, si para cada salto $s$, $s$ es un salto m\'aximo, y si la sumatoria de saltos es mayor a la cantidad de tablones del puente, entonces nuestra secuencia es solucion del problema.
 
 Dada un Sec$<$Salto$>$ $se$.
 
-$(\forall i:Nat, i < se.long)(esMax(se_{i}) \wedge \sum_{j=0}^{se.long-1}se_{j} = puente.long)\implies$ \\ $\not\exists (se':Sec<Salto>) /
+$(\forall i:Nat, i < se.long)(esMax(s,i) \wedge \sum_{j=0}^{se.long-1}se_{j} = puente.long)\implies$ \\ $\not\exists (se':Sec<Salto>) /
 se.long < se'.long \wedge \sum_{j=0}^{se'.long-1}se'_{j} \geq puente.long)$  
+
+Donde esMax devuelve true cuando el no existe un salto mas largo desde la posicion donde estamos.
+%implementar esto.
 
 Para probar esto, vamos a utilizar la definici\'on can\'onica de demostraci\'on de correctitud para algoritmos greedy, dada en clase por la c\'atedra. Un algoritmo goloso, puede plantearse como el siguiente esquema:
 %comentar introduction to algorithim
@@ -133,22 +136,23 @@ Si los tiene, y ordenamos por orden de salto (primera coordenada) , $S'^{*}$ no 
 Por lo tanto si existe un elemento que se superponga, se superponen con X.
 Sea Y un elemento que se superpone con X.
 Sean $Y_{1},Y_{2},X_{1},X_{2}$ las componentes de Y,X respectivamente.
-$Y_{1}\geq X_{2}$ ya que sino X no tenia la primera componente m\'inima.
+$Y_{1}\geq X_{1}$ ya que sino X no tenia la primera componente m\'inima.
 
-Si $Y_{1} = X_{1}$ entonces $X_{2} \geq Y_{2}$ ya que sino F hubiera agarrado primero a Y. Por lo tanto yo podria tomar $S'^{*}$ = $S^{*}$ $\cup$ ${X}$ - ${Y}$ y eso seguiria siendo sub-soluci\'on.
+Si $Y_{1} = X_{1}$ entonces $X_{2} \geq Y_{2}$ ya que sino F hubiera agarrado primero a Y. Por lo tanto yo podria tomar $S'^{*}$ = $S^{*}$ $\cup$ ${X}$ - ${Y}$ y eso seguiria siendo sub-soluci\'on ya que el intervalo I = [$Y_{2},X_{2}$] estar\'ia cubierto con un solo salto por un soluci\'on que contenga a X, y necesitaria al menos 2 para un soluci\'on que contega a Y.
 
 Si $Y_{1} > X_{1}$ entonces hay dos casos:
 
-Si $Y_{2} \leq X_{2}$ entonces todo el intervalo cubierto por Y, estaria inclu\'ido en el intervalo cubierto por X, y en el intervalo I = [$X_{1},Y_{1}$], I $\neq \emptyset$ habr\'ia que cubrirlo con un salto por lo tanto $S^{*}$ no ser\'ia subsoluci\'on.
+Si $Y_{2} \leq X_{2}$ entonces todo el intervalo cubierto por Y, estaria inclu\'ido en el intervalo cubierto por X, y en el intervalo I = [$X_{1},Y_{1}$], I $\neq \emptyset$ habr\'ia que cubrirlo con un salto por lo tanto $S^{*}$ no ser\'ia subsoluci\'on. Mismo para I' =  [$Y_{2},X_{2}$].
 
 Si $Y_{2} > X_{2}$ entonces yo se que X,Y no pueden estar en la misma soluci\'on(se superponen). Pero se que Y pertenece a alguna soluci\'on. Veamos que existe un intervalo que cubre X, pero no Y que seria el intervalo I = [$X_{1}$,$Y_{2}$].
-Bueno pero como X contiene a todo este intervalo, existe una solucion que contiene al salto $S_{Y}$ = ($X_{1}$,$Y_{2}$). Asi que dado un soluci\'on que contiene a Y, al menos contiene un salto m\'as en ese intervalo.
-Luego dado el intervalo I'=[$X_{2}$,$Y_{2}$], como X se superpone con Y, $X_{2}$ $>$ $Y_{1}$, por lo tanto existe un salto $S_{X}$ que con componentes ($X_{2}$,$Y_{2}$).
+Bueno pero como X contiene a todo este intervalo, existe una solucion que contiene al salto $S_{Y}$ = ($X_{1}$,$Y_{2}$). Asi que dado un soluci\'on que contiene a Y, al menos contiene un salto m\'as en ese intervalo. Recordemos que puede haber saltos que extiendan el ultimo salto de $S^{opt}$, pero no nos interesan porque no ser\'ian compatibles con $S^{opt}$ ya que se superpondr\'ian.
+ 
+Luego dado el intervalo I'=[$X_{2}$,$Y_{2}$], como X se superpone con Y, $X_{2}$ $>$ $Y_{1}$, por lo tanto existe y es posible un salto $S_{X}$ con componentes ($X_{2}$,$Y_{2}$).
 Luego si analizamos las dos sub-soluciones contienen al mismo intervalo en dos saltos, por lo que si existe una soluci\'on para que contiene a Y, existe una soluci\'on que contenga a X. 
 
 Con esto queda comprobado 3).
 
-Finalmente, si S $== \emptyset$ entonces no hay mas saltos, por lo tanto nuestra $S^{opt}$ recorre todo el puente.
+Finalmente, si S $== \emptyset$ entonces no hay mas saltos, por lo tanto nuestra $S^{opt}$ recorre todo incluye a todo el puente.
 Tenemos $S^{opt}$  que sabemos es una sub-soluci\'on de $S^{*}$. Y si $S^{opt}$ ya recorrio todo el puente, no hace falta agregarle ning\'un salto, por lo tanto $S^{opt} =S^{*}$.  
 
 Con esto queda comprobado 4).
@@ -222,8 +226,8 @@ $O($\textit{cruzarPuentes}$) = O(n*k)$
 %esto de decir que el algoritmo depende de k, yo no lo pondria porque sino nos van a decir que no es O(n) como pidieron ellos.
 
 Entonces por cada paso que da, el algoritmo calcula hasta k tablones para saber cual es el pr\'oximo que no este roto m\'aximo, pero con la particularidad que calcula primero el mas lejano, por lo tanto dado un salto de longitud k':Nat, k'$\leq$ k, el pr\'oximo salto S, va a tener que ser mayor o igual a k - k', ya que sino S caeria en un tabl\'on roto.
-Esto sucede por k' esta acotado por los tablones que est\'an rotos.
-Por ejemplo, suponiendo un k = 10. Dentro de un intervalo de tablones de 10 elementos, el tabl\'on 10, 9 y 8 est\'an rotos. Por lo tanto k' = 7. Entonces vemos que los tablones rotos por arriba son los que acotan a k', luego el pr\'oximo salto debe ser mayor a 3. Y si itera mas de k - k' veces, el puente no tiene soluci\'on.
+Esto sucede porque k' esta acotado por los tablones que est\'an rotos.
+Por ejemplo, suponiendo un k = 10. Dentro de un intervalo de tablones de 10 elementos, el tabl\'on 10, 9 y 8 est\'an rotos. Por lo tanto k' = 7. Entonces vemos que los tablones rotos por arriba son los que acotan a k', luego el pr\'oximo salto debe ser mayor a 3. Y si se itera mas de k - k' veces, el puente no tiene soluci\'on.
 Esto lo que implica que dado cualquier k, el algoritmo siempre va a recorrer a lo sumo N elementos dentro del puente. El peor caso seria k=1.
 Finalmente podemos concluir que es de orden $O(n)$.
 
