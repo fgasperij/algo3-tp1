@@ -10,11 +10,11 @@ sus coordenadas sobre el eje de las abscisas $X$.
 \paragraph{Evento}
 Definiremos un evento como una tupla $<ev_x$, $ev_h$, $ev_t>$ que cumple la siguiente propiedad:
 \begin{displaymath}
-	ev_x, ev_h, ev_t \in \mathbb{N} \land ev_t \in \{ abrir, cerrar\}
+	ev_x, ev_h, ev_t \in \mathbb{N} \land ev_t \in \{ 1, 0\}
 \end{displaymath}
 $ev_x$ representa el valor de la coordenada $x$ del evento, $ev_h$ la altura del evento y $ev_t$ el tipo de 
-evento.
-Dado un edificio $e = <e_p$, $e_f$, $e_h>$  diremos que dos eventos lo representan $ev_{abrir} = <e_p$, $e_h$, $abrir>$ y $ev_{cerrar} = <e_f$, $e_h$, $cerrar>$.
+evento, 1 para un evento que representa el comienzo de un edificio y 0 para los eventos que representan el fin de un edificio.
+Dado un edificio $e = <e_p$, $e_f$, $e_h>$  diremos que dos eventos lo representan $ev_{abrir} = <e_p$, $e_h$, $1>$ y $ev_{cerrar} = <e_f$, $e_h$, $0>$.
 Es decir, que cada edificio lo representamos con dos eventos, uno que marca el comienzo y otro que marca el fin del mismo. 
 Dado un conjunto $E$ de edificios decimos que el conjunto $Ev$ de eventos que lo representa es aquel que contiene dos eventos
 por cada edificio de $E$ derivados de la forma antes mostrada.
@@ -34,7 +34,7 @@ $h$ nos devuelve la altura del edificio más alto que cubre ese valor de $x$
 contando con $h$ ya podemos definir correctamente nuestro conjunto de puntos que conforman el contorno del
 conjunto de edificios $E$:
 \begin{displaymath}
-	C = \{ p = (x_p, y_p) | h(x_p - 1, E) \neq h(x_p, E) \land (\exists ev \in Ev | ev_x = x_p \land ev_h = y_p) \}
+	C = \{ p \in \mathbb{N}^2 | h(p_x - 1, E) \neq h(p_x, E) \land (\exists ev \in Ev | ev_x = p_x \land ev_h = p_y) \}
 \end{displaymath}
 Es decir, los puntos que pertenezcan al conjunto $contorno$ registrarán los cambios de altura. Cada punto
 del contorno puede interpretarse como: a partir de este $p_x^i$ y hasta el $p_x^{i+1}$ el edificio con mayor
@@ -44,120 +44,128 @@ porque un edificio empiece o porque un edificio haya concluido.
 Dado un conjunto de edificios $E$ existe un único conjunto $C$ que representa su contorno. 
 Vale la pena aclarar que por como está planteado el problema la función $h$ nos dice que si tenemos un conjunto $E$
 de edificios que sólo contiene un edificio $e = <e_p, e_f, e_h>$ entonces $h(e_p, E) = e_h$ pero $h(e_f, E) = 0$.
+La altura de los edificio representa de esta forma un intervalo cerrado a izquierda pero abierto a derecha
+respecto a la información que el contorno registra.
 
-\paragraph{Algoritmo} 
+\textbf{Correctitud}
+\par
 A continuación se presenta el pseudocódigo de nuestra implementación sobre el cual plantearemos la
 demostración de correctitud:
 
-\begin{algorithm}[H]
-\begin{algorithmic}
-\STATE $eventos$ $\gets$ extraer\_eventos($edificios$)
-\STATE $abiertos$ $\gets$ $\emptyset$			// permite elementos repetidos
-\STATE $h_{actual}$ $\gets$ 0
-\WHILE {$eventos$ $\neq$ $\emptyset$}
-	\STATE $ev$ $\gets$ proximo\_evento($eventos$)
-	\IF {abre($ev$)}
-		\STATE Agregar($abiertos$, $ev_h$)
-		\IF {$h_{actual}$ $<$ $ev_h$}
-			\STATE $h_{actual}$ $\gets$ $ev_h$
-			\STATE Agregar($<ev_x, ev_h>$, $contornoParcial$)
-		\ENDIF
-	\ELSE
-		\STATE Sacar($abiertos$, $ev_h$)			// quita una sola repetición del elemento
-		\IF {$h_{actual}$ = $ev_h$ $\land$ max($abiertos$) $<$ $h_{actual}$}
-			\STATE $h_{actual}$ = max($abiertos$)
-			\STATE Agregar($<ev_x, h_{actual}>$, $contornoParcial$)  
-		\ENDIF
-	\ENDIF
-\ENDWHILE
-\caption{horizontes\_lejanos}
-\end{algorithmic}
-\end{algorithm}
+De ahora en más vamos a referirnos como $contorno$ a la secuencia que contiene a todos los elementos de
+el conjunto de contorno $C$ ordenados por su coordenada $p_x^i$. Además, vamos a referirnos a que un
+edificio $e$ contiene o abarca a un valor $x$ cuando $x \in [e_p, e_f)$.
 
-\begin{algorithm}[H]
-\begin{algorithmic}
-	\STATE $min_x$ = min( $\{ ev_x | ev \in eventos\}$ )
-	\STATE $comparten\_min_x$ = $\{ ev \in eventos | ev_x = min_x \}$
-	\IF {quedanEventosDeApertura($comparten\_min_x$)}
-		\STATE $comparten\_min_x$ = filtrarLosDeCierre($comparten\_min_x$)
-		\RETURN mayorAltura($comparten\_min_x$)
-	\ELSE
-		\RETURN menorAltura($comparten\_min_x$)
-	\ENDIF
-\caption{proximo\_evento}
-\end{algorithmic}
-\end{algorithm}
+Vamos a demostrar algunos lemas que nos servirán para realizar la demostración.
 
-(TODO hacer que el código desempate de la misma forma)
-
-El invariante que cumple el ciclo de nuestro algoritmo, tomando $ev = proximo\_evento(eventos)$, comprende las siguientes
-tres propiedades simultaneamente:
+\paragraph{Lema 1}
+Todos los puntos pertenecientes a $C$ satisfacen:
 \begin{enumerate}
-	\item $h_{actual} = h(ev_x^{i-1}, E)$
-	\item $abiertos = \{ e_h | e \in Edificios \land e_p \leq (ev_x^i) \land e_f > (ev_x^i) ) \}$
-	\item $contornoParcial = \{ p \in \mathbb{N}^2 | p \in C \land p_x < ev_x \}$
+	\item $(\forall p \in C) \exists ev \in Eventos \text{ / } p_x = ev_x$
 \end{enumerate}
-(TODO LEMA: mostrar que la altura no puede cambiar entre dos eventos consecutivos de proximo\_evento)
+La propiedad se desprende de la misma definición del conjunto $contorno$. Como $h(p_x, Edificios) \neq h(p_x - 1, Edificios)$ 
+necesariamente ese cambio en la función de altura tiene que haberse producido porque un edificio 
+$e = <e_p$, $p_x$, $h(p_x-1, Edificios)>$ concluyó, en el caso de que $h(p_x, Edificios) < h(p_x - 1, Edificios)$, o porque un
+edificio $e = <p_x$, $e_f$, $h(p_x, Edificios)>$ comenzó, en el caso de que $h(p_x, Edificios) > h(p_x - 1, Edificios)$, ya que 
+la altura por defecto para cualquier valor de $x$ que no esté contenido por un edificio del conjunto de edificios es 0. En los dos
+casos tenemos un edificio que empieza o termina en $p_x$. Como el conjunto $Eventos$ contiene precisamente un evento por cada comienzo
+y fin de un edificio, en particular contiene a los que satisfacen en cada caso la propiedad expresada.
 
-Primero mostraremos que el invariante se cumple antes de entrar al ciclo, con $ev = proximo\_evento(Eventos)$:
-\begin{description}
-	\item[$h_{actual}$] antes de entrar al ciclo el conjunto $Eventos$ posee todos los eventos derivados
-	del conjunto de edificios. Por lo tanto, $ev$ se va a corresponder con alguno de los eventos que 
-	tengan $ev_x = min_x$ y $ev_x - 1$ va a ser un valor que no puede estar cubierto por ningún edificio
-	ya que es previo al comienzo de cualquiera. Como $h$ es igual a 0 para todo $x$ que no esté contenido
-	dentro del intervalo cerrado-abierto definido por un edificio se cumple que $h_{actual} = h(ev_x - 1, E)$.
-	
-	\item[$abiertos$] antes de entrar al ciclo el multiconjunto $abiertos = \emptyset$. Esto es correcto porque antes de
-	entrar al ciclo $ev_x - 1$ se corresponde con una ubicación previa al comienzo de algún edificio. Por lo tanto,
-	no puede haber ningún edificio abierto.
-	
-	\item[$contornoParcial$] el conjunto $contornoParcial$ comienza vacío. Como $ev_x$ es un valor de $x$ previo al comienzo del edificio
-	sería absurdo que hubiera un punto que perteneciera al conjunto $contorno$ del conjunto $Edificios$ y tuviera
-	un $x$ menor estricto al $e_p$ de todos los edificios. La única forma de que ocurra un cambio de altura, que es
-	como están definidos los puntos del contorno, es que empiece o termine un edificio. Como antes de $ev_x$ todavía 
-	no empezó ni terminó ningún edificio no puede haber ningún punto que pertenezca al conjunto $contorno$ y 
-	tenga un $p_x < ev_x$.
-\end{description}
-luego debemos mostrar que si el invariante se cumple antes de entrar al ciclo entonces necesariamente seguirá 
-cumpliéndose luego de ejecutarse el mismo. Vamos a suponer que estamos en la iteracion $i$. 
-Primero veamos que sucede con el multiconjunto $abiertos$. Notemos que
-$abiertos$ es modificado en todas las iteraciones del ciclo. Lo único que cambia es que cuando $ev$ es de tipo
-Abrir, vale $ev_t$, entonces se le agrega un elemento y cuando es de tipo Cerrar, vale $\neg ev_t$, se le elimina un elemento. 
-Entonces tenemos dos casos:
+\paragraph{Lema 2}
+Sea S la secuencia de eventos tal que:
+\begin{displaymath}
+	ev \in S \Leftrightarrow ev \in Eventos
+\end{displaymath}
+de forma tal que el orden en el que se encuentran es el impuesto por agregarlos en el orden en el que la función 
+proximo\_evento($Eventos$) los devuelve. Se cumple que:
+\begin{displaymath}
+	(\forall ev^1, ev^2 \in Eventos \text{ / } ev^1_x = ev^2_x) ev^1_h * ev^1_t > ev^2_h * ev^2_t \Rightarrow posicion(ev^1, S) < posicion(ev^2, S)
+\end{displaymath}
+Los casos que podemos tener son los siguientes:
 \begin{enumerate}
-	\item vale $ev_t$, el evento es de tipo Abrir: en este caso $ev_h$ es agregado al multiconjunto $abiertos$. 
-	Si $abiertos$ contenia las alturas de todos los edificios abiertos en $ev^{i-1}_x$ y ahora contiene $ev^{i}_h$
-	porque vale $ev_t$, la agregamos en esta iteracion $i$, entonces necesariamente contiene todas las alturas
-	de los edificios abiertos hasta $ev^{i+1}_x$ porque entre dos eventos consecutivos (por proximo\_evento()) no 
-	pueden ni empezar ni terminar edificios. (TODO quizas haga falta un lema mostrando esto de que entre dos eventos
-	consecutivos no puede "suceder" nada)
-	
-	\item no vale $ev_t$, el evento es de tipo Cerrar: en este caso $ev_h$ es eliminado una vez del multiconjunto
-	$abiertos$. $abiertos$ contenia todas las alturas de todos los edificios abiertos en $ev^{i-1}_x$ y en esta
-	iteracion le eliminamos la del unico edificio que termina en el intervalo $[ev^{i-1}_x,ev^{i+1}_x]$. Como
-	no puede haber cerrado otro ni se pudo haber abierto otro en ese intervalo entonces contiene todas las 
-	alturas de todos los edificios abiertos en $(ev^{i+1}_x-1)$ 
+	\item $\text{abre}(ev^1) \land \neg\text{abre}(ev^2)$  en este caso vemos que necesariamente $ev^1$ va a ser devuelto
+	primero por proximo\_evento() porque siempre si los eventos comparten la coordenada $x$ prioriza los de apertura
+	con la función filtrarLosDeCierre(Eventos).
+	\item $\text{abre}(ev^1) \land \text{abre}(ev^2)$  podemos ver en el algoritmo de proximo\_evento() que cuando luego
+	de filtrar por $min_x$ y quedarse con los de apertura en caso de que existan, estamos en el caso de que existen,
+	$ev_1$ y $ev_2$ cumplen, devuelve primero el de mayor altura. Con lo cual la posición del de mayor altura
+	necesariamente es menor.
 \end{enumerate}
+$\square$
 
+\paragraph{Lema 3}
+Sea $contorno$ la secuencia de puntos del contorno $C$ ordenados por su coordenada $x$. La secuencia tiene 
+$n+1$ puntos $p^0,...,p^n$:
+\begin{displaymath}
+	(\forall x \in \mathbb{N} \text{ / } x < p_x^0 \lor x \geq p_x^n) h(x, E) = 0
+\end{displaymath}
+y además:
+\begin{displaymath}
+	(\forall x \in \mathbb{N} \text{ / } x \geq p_x^0 \land x < p_x^n) h(x, E) = p_y^{maxXmenor}
+\end{displaymath}
+con $p_y^{maxXmenor}$ igual al $p_y$ del $p$ que tiene el máximo $p_x$  de todos los $p$ que cumplen $p_x \leq x$.
 
+La primer propiedad predica que antes del primer edificio y después del último, asumiendo un orden por coordenada $x$,
+la función $h$ siempre vale 0. Estose desprende directamente de su definición, si todavía no empieza ningún edificio o
+si ya terminaron todos es imposible que la altura valga algo mayor a 0 porque por defecto vale 0.
+La segunda propiedad nos dice que entre dos puntos $p^1$, $p^2$ consecutivos del contorno la función $h$ necesariamente tiene
+que devolvernos $p_y^1$. Si no fuera así entonces existiría un $x$ entre $p_x^1$ y $p_x^2$ en el cual $h(x, Edificios)$ nos devuelve
+distinto de $p_y^1$. Como $p_y^1 = h(p^1_x, Edificios)$, por definición de contorno debería existir un punto $p$ del mismo
+tal que $p_x = x$. Pero $x$ se encuentra entre $p_x^1$ y $p_x^2$ que son puntos consecutivos del contorno por lo cual no
+puede existir ningún cambio de altura entre ellos ya que si existiera debería haber un punto del contorno allí y eso es
+absurdo porque presumimos que eran consecutivos.
+$\square$
+ 
+Nuestro algoritmo consiste en un ciclo que itera sobre todos los elementos de $Eventos$. Vamos a demostrar
+que el ciclo cumple el siguiente invariante:
+\begin{displaymath}
+	esPrefijo(contorno_parcial, contorno) 
+\end{displaymath}
 
-
-
-
-
-
-
-
-
+\textbf{Antes de entrar al ciclo}
+\par
+Antes de entrar al ciclo $contorno_{parcial} = secuencia\_vacia$. La secuencia vacía es prefijo de todas las secuencias, por lo tanto
+el invariante se cumple antes de entrar al ciclo por primera vez.
+\par
+\textbf{El ciclo preserva el invariante}
+\par
+Si el ciclo no agrega puntos a $contorno_parcial$ entonces necesariamente sigue siendo prefijo de $contorno$ por lo cual
+el invariante se preserva. Necesitamos demostrar que lo preserva cuando agrega elementos al mismo. Llamamos $p^i$ al último 
+elemento de la secuencia $contorno_{parcial}$ y $h_{actual}$ a $p^i_y$. Existen dos casos en los que agrega elementos a 
+$contorno_parcial$, estos son cuando se cumplen alguna de estas dos proposiciones:
 \begin{description}
-	\item[$h_{actual}$] 
-	
-	\item[$abiertos$] 
-	
-	\item[$contornoParcial$] 
+	\item[Caso 1] $\text{abre}(ev) \land h_{actual} < ev_h$
+	\item[Caso 2] $\neg\text{abre}(ev) \land ev_h = h_{actual} \land maxAbierto(ev_x) < h_{actual}$
 \end{description}
-
-
-
-
-
+$contorno_{parcial}$ es prefijo de $contorno$. Para que $contorno_{parcial}$ continue siendo prefijo el elemento
+que agregue tiene que ser necesariamente $p^{i+1}$ en la secuencia $contorno$. $p^{i+1}_x$ es el mínimo $x$ tal que $x > p^i_x$
+ y $h(x, Edificios) \neq p^i_y$. Por \textbf{Lema 1} sabemos que necesariamente existe un $ev$ tal que $ev_x = p^{i+1}_x$.
+\par
+Si $p^{i+1}_x > p^{i}_x$ entonces vale abre($ev$). Por \textbf{Lema 2} sabemos que nuestro algoritmo
+iterará primero sobre el $ev^i$ con $ev^i_x = p^{i+1}_x \land \text{abre}(ev^i)$ de mayor altura. Entonces, necesariamente itera
+primero sobre el que cumple que $ev_x = p^{i+1}_x \land h_{actual} < ev_h$. Como entra en el Caso 1 sabemos que lo va a agregar y además
+sabemos que como proximo\_evento() devuelve primero los que menor coordenada $x$ tengan será el con mínimo $ev_x$ que cumple el Caso 1.
+Entonces concluimos que si $p^{i+1}_x > p^{i}_x$ entonces nuestro algoritmo lo va a agregar a contorno parcial y va a ser el
+primero que agregue. Por lo tanto, $contorno_{parcial}$ sigue siendo prefijo de $contorno$.
+\par
+El otro caso es cuando vale $p^{i+1}_x < p^{i}_x$. Ésto implica que $\neg\text{abre}(ev)$, tomando $ev$ con el que se 
+corresponde con $p^{i+1}$. $ev_h = h_{actual}$ se desprende de que si fuera mayor caemos en un absurdo porque asumimos que 
+$p^{i+1}_x < p^{i}_x$ y si fuera menor entonces no cambiaría la altura, lo cual lo excluiría de la definición de los 
+puntos pertenecientes a $C$. Por último, es necesario que $maxAbierto(ev_x) < h_{actual}$ porque si no se cumpliera
+esto no existiría tal cambio de altura, por lo cual el punto no pertenecería la contorno. Por lo tanto, el próximo punto
+del contorno cae en nuestro Caso 2 y también es agregado al $contorno_{parcial}$ para que preserve la propiedad
+de ser prefijo de $contorno$.
+\par
+Finalmente, necesitamos demostrar que la satisfacción del invariante y la negación de la guarda del ciclo implican que 
+$contorno_{parcial} = contorno$. Veamos que:
+\begin{enumerate}
+	\item Comparten el último elemento: el último elemento de $contorno$ cumple que $p_y = 0 \land p_x = e_f^max$ con $e_f^max$
+	el maximo valor de finalizacion de entre todos los edificios. Antes de $e_f^max$ $h \geq e_h^max$ y para todo $x$ mayor o igual
+	a $e_x^max$ valdrá 0. Por lo tanto, es el último punto donde cambia la altura, será el último punto de mi contorno. Ese punto
+	además tiene un evento correspondiente que es el último que recorre proximo\_evento() y cumple el Caso 2 por lo
+	cual también será agregado.
+	\item El orden que guardan sus elementos es total: esto ya lo demostramos, es simplemente que $p^i_x < p^{+1}i_x$ para 
+	todos los i entre 0 y las longitud de $contorno$. 
+\end{enumerate}
+Estas dos propiedades y el hecho de que sea prefijo una de otra nos implica directamente que las secuencias son iguales. Por
+lo tanto, al concluir el ciclo, efectivamente $contorno_{parcial} = contorno$.
