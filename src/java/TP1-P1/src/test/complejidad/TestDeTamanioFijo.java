@@ -46,8 +46,12 @@ public class TestDeTamanioFijo {
 			float prom = 0;
 			for (int j = 0; j < CANTIDADDEIERACIONES; j++) {
 				int saltoMax = random.nextInt(SALTOMAX);
+				boolean[] b = new boolean[i];
+				for (int k = 0; k < b.length; k++) {
+					b[k] = random.nextBoolean();
+				}
 				Long ats = new Date().getTime();
-				Puente puente = new Puente(random, i);
+				Puente puente = new Puente(b);
 				Saltarin.saltar(puente, saltoMax);
 				Long dps = new Date().getTime();
 				// Esto lo hacemos para evitar outlayers
