@@ -44,25 +44,40 @@ COMPLETAR
 
 \subsubsection{Pseudoc\'odigo}
 %aca va el pseudocodigo del problema.
-\begin{algorithm}
+\begin{algorithm}[H]
 \begin{algorithmic}
-	\STATE input: $edificios$
-%	\STATE $eventos$ = parseEdificios($edificios$)
-	\WHILE{quedan edificios}
-		\IF{empieza edificio}
-			\STATE registro el edificio como abierto
-			\IF{altura del edificio es mayor a la del contorno}
-				\STATE agrego la altura del edificio al contorno
-			\ENDIF 
-		\ELSE
-			\STATE saco al edificio de los abiertos
-			\IF{este edificio le daba la altura al contorno}
-				\STATE agrego la altura del edificio abierto que le siga en altura al contorno
-			\ENDIF
+\STATE $eventos$ $\gets$ extraer\_eventos($edificios$)
+\STATE $contorno_parcial$ $\gets$ $secuencia_vacia$
+\STATE $h_{actual}$ $\gets$ 0
+\WHILE {$eventos$ $\neq$ $\emptyset$}
+	\STATE $ev$ $\gets$ proximo\_evento($eventos$)
+	\IF {abre($ev$)}
+		\IF {$h_{actual}$ $<$ $ev_h$}
+			\STATE $h_{actual}$ $\gets$ $ev_h$
+			\STATE AgregarAtrás($<ev_x, ev_h>$, $contornoParcial$)
 		\ENDIF
-	\ENDWHILE
-	
-	\RETURN contorno
+	\ELSE
+		\IF {$h_{actual}$ = $ev_h$ $\land$ maxAbierto($ev_x$) $<$ $h_{actual}$}
+			\STATE $h_{actual}$ = maxAbierto($ev_x$)
+			\STATE AgregarAtrás($<ev_x, h_{actual}>$, $contorno_parcial$)  
+		\ENDIF
+	\ENDIF
+\ENDWHILE
+\caption{horizontes\_lejanos}
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]
+\begin{algorithmic}
+	\STATE $min_x$ = min( $\{ ev_x | ev \in eventos\}$ )
+	\STATE $comparten\_min_x$ = $\{ ev \in eventos | ev_x = min_x \}$
+	\IF {quedanEventosDeApertura($comparten\_min_x$)}
+		\STATE $comparten\_min_x$ = filtrarLosDeCierre($comparten\_min_x$)
+		\RETURN mayorAltura($comparten\_min_x$)
+	\ELSE
+		\RETURN menorAltura($comparten\_min_x$)
+	\ENDIF
+\caption{proximo\_evento}
 \end{algorithmic}
 \end{algorithm}
 
@@ -70,7 +85,7 @@ COMPLETAR
 \input{p2_demo_correctitud}
 
 \subsection{An\'alisis de complejidad}
-%aca decimos cuanto cuesta cada parte del algoritmo y damos un valor final de la complejidad del algoritmo, ej O(logn).
+\input{p2_complejidad}
 
 \subsection{Test de complejidad}
 %aca van los graficos y todos los testeos que hagamos para probar que en la practica el algoritmo cumple la complejidad que propusimos en el punto anterior
