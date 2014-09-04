@@ -1,0 +1,31 @@
+// Este programa va a crear una cantidad X de instancias aleatorias de Y productos, para Y = {1,...,algunValor} y las va a devolver por SALIDA ESTANDAR (consola). El umbral va a ser fijo (quizas convenga despues variar esto a ver qué pasa). Vale que para toda peligrosidad, 0 <= peligrosidad <= UMBRAL + 1.
+// Hay que usar ./randomGen > textFile para guardar a disco.
+// g++ -O3 randomGen.cpp -o randomGen
+
+#include <iostream>
+#include <unistd.h>
+#include <cstdlib>
+#include <cstdlib>
+
+using namespace std;
+
+const int CANT_INSTANCIAS = 500;
+const int LIM_PRODUCTOS = 15;
+const int UMBRAL = 100;
+
+int main(int argc, const char* argv[]) {
+    srand(time(NULL) + getpid()); // Seedeo
+    for (int totalProductos = 2; totalProductos <= LIM_PRODUCTOS; totalProductos++) {
+        for (int instancia = 1; instancia <= CANT_INSTANCIAS; instancia++) {
+            cout << totalProductos << " " << UMBRAL << endl;
+            for (int producto = 1; producto <= totalProductos - 1; producto++) {
+                for (int peligrosidad = 1; peligrosidad <= totalProductos - producto; peligrosidad++) {
+                    cout << rand() % (UMBRAL + 2) << " "; // Esto genera un entero random entre 0 y UMBRAL + 1.
+                }
+                cout << endl;
+            }
+        }
+    }
+    cout << "0" << endl;
+}
+
