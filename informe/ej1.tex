@@ -190,9 +190,9 @@ $O($\textit{cruzarPuentes}$) = O(n*k)$
 
 \label{an}
 Podemos ver que la cota es todavia mejor.
-Por cada paso que da, el algoritmo calcula hasta k tablones para saber cual es el pr\'oximo que no este roto m\'aximo, pero con la particularidad que calcula primero el mas lejano, por lo tanto dado un salto de longitud k':Nat, k'$\leq$ k, el pr\'oximo salto S, va a tener que ser mayor o igual a k - k', ya que sino S caeria en un tabl\'on roto.
+Por cada paso que da, el algoritmo calcula hasta k tablones para saber cual es el pr\'oximo que no este roto m\'aximo, pero con la particularidad que calcula primero el mas lejano, por lo tanto dado un salto de longitud k$'$:Nat, k$'$$\leq$ k, el pr\'oximo salto S, va a tener que ser mayor o igual a k - k$'$, ya que sino S caeria en un tabl\'on roto.
 Esto sucede porque k$'$ esta acotado por los tablones que est\'an rotos.
-Por ejemplo, suponiendo un k = 10. Dentro de un intervalo de tablones de 10 elementos, el tabl\'on 10, 9 y 8 est\'an rotos. Por lo tanto k' = 7. Entonces vemos que los tablones rotos por arriba son los que acotan a k', luego el pr\'oximo salto debe ser mayor a 3. Y si se itera mas de k - k' veces, el puente no tiene soluci\'on.
+Por ejemplo, suponiendo un k = 10. Dentro de un intervalo de tablones de 10 elementos, el tabl\'on 10, 9 y 8 est\'an rotos. Por lo tanto k$'$ = 7. Entonces vemos que los tablones rotos por arriba son los que acotan a k$'$, luego el pr\'oximo salto debe ser mayor a 3. Y si se itera mas de k - k$'$ veces, el puente no tiene soluci\'on.
 Esto lo que implica que dado cualquier k, el algoritmo siempre va a recorrer a lo sumo N elementos dentro del puente. El peor caso seria k=1.
 Si a esto le agregamos la construcci\'on del array de entrada para el puente es de costo lineal en funci\'on de n, finalmente podemos concluir que todo el algoritmo es de orden $O(n)$.
 
