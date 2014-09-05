@@ -11,7 +11,7 @@
 using namespace std;
 
 const int MAX_CANTIDAD_PRODUCTOS = 100;
-const int FOR_MINIMO = 3;
+const int FOR_MINIMO = 2;
 const bool PODA_AGREGAR_CAMION = true;
 const bool PODA_RESTO_PRODUCTOS = true;
 
@@ -110,7 +110,7 @@ void bt(int producto, vector<Camion> &camiones, vector<Camion> &mejorTemp,
                         }
                         if (!entraEnAlguno) {
                             sacarProducto(producto, camiones[j], peligrosidadPrevia);
-                            return;
+                            continue;
                         }
                     }
                 }

@@ -9,7 +9,7 @@
 
 using namespace std;
 
-const int CANT_INSTANCIAS = 500;
+const int CANT_INSTANCIAS = 5;
 const int LIM_PRODUCTOS = 15;
 const int UMBRAL = 100;
 

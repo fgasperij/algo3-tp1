@@ -133,9 +133,9 @@ Testearemos instancias aleatorias con cantidad de productos en $[2,...,15]$. Los
 
 En la sección anterior dijimos que la complejidad del algoritmo sin podas es $O\left(\sum\limits_{\substack{i = 1}}^n i!\right)$. Hicimos tests de medición de tiempo para corroborar esto. Notemos que 
 \begin{align*}
-O\left(\sum\limits_{\substack{i = 1}}^n i!\right) \in O(n \times n!)
+O\left(\sum\limits_{\substack{i = 1}}^n i!\right) \subseteq O(n \times n!)
 \end{align*}
-Por otro lado, por propiedades del logaritmo, 
+Por otro lado, por propiedad del logaritmo, 
 \begin{align*}
 ln(n \times n!) &= ln(n) + ln(n!)
 \end{align*}
@@ -160,8 +160,8 @@ En el próximo gráfico ploteamos, para $n$ $=$ cantidad de productos, $t_n$ $=$
 
 Analicemos ahora cómo se comporta el algoritmo con las siguientes podas: 
 \begin{enumerate}
-\item Sabiendo que en la rama en la que estoy tenemos $C-1$ camiones, donde $C$ es la cantidad de camiones de la mejor solución hasta el momento, al insertar exitosamente un producto en alguno de los camiones, va a chequear --antes de llamar a la recursión-- si el resto de los productos pueden entrar en algún camión. Si algún producto no puede entrar en ningún camión, eso implica que necesitamos al menos un camión más, lo cual empata a la mejor solución, es entonces donde se poda esta rama que no llevará a nada mejor. El problema de esta cota es que pueden estar recalculándose múltiples veces si un producto $x$ entra en un camión $y$, lo cual puede ser un problema porque cada vez que se ejecuta esta poda se hacen $O(n^2)$ comparaciones de peligrosidades.
-\item Esta cota también se activa al estar en $C-1$ camiones, y es más simple y rápida que la anterior: si llegamos al punto donde tenemos que agregar un camión, salimos, porque empatamos a la mejor solución y no sirve toda esa rama.
+\item La poda ``del resto de los productos'' consiste en lo siguiente: Sabiendo que en la rama en la que estoy tenemos $C-1$ camiones, donde $C$ es la cantidad de camiones de la mejor solución hasta el momento, al insertar exitosamente un producto en alguno de los camiones, va a chequear --antes de llamar a la recursión-- si el resto de los productos pueden entrar en algún camión. Si algún producto no puede entrar en ningún camión, eso implica que necesitamos al menos un camión más, lo cual empata a la mejor solución, es entonces donde se poda esta rama que no llevará a nada mejor. El problema de esta cota es que pueden estar recalculándose múltiples veces si un producto $x$ entra en un camión $y$, lo cual puede ser un problema porque cada vez que se ejecuta esta poda se hacen $O(n^2)$ comparaciones de peligrosidades.
+\item La poda de ``agregar camión'' también se activa al estar en $C-1$ camiones, y es más simple y rápida que la anterior: si llegamos al punto donde tenemos que agregar un camión, salimos, porque empatamos a la mejor solución y no sirve toda esa rama.
 \end{enumerate}
 
 Si vemos los tiempos de las tres configuraciones, tenemos:
@@ -196,4 +196,15 @@ A pesar de esto, para valores bajos de $n$ es una excelente poda. Por último, p
 	\end{minipage}
 \end{figure}
 
-Logramos mejorar aún más el tiempo de ejecución para valores bajos, aunque rápidamente alcanza a la poda anterior.
+Usar ambas podas no mejora el tiempo de ejecución en comparación con la poda de agregar camión. Veamos si usar ambas es mejor que usar solamente la del resto:
+
+\begin{figure}[H]
+	\begin{minipage}[t]{\linewidth}
+		\centering
+		\includegraphics[width=\textwidth]{comparacion_poda_resto_con_ambas_podas.jpg}
+		%\caption{Con colisión total}
+		\label{fig:p3_comparacion_poda_resto_con_ambas_podas}
+	\end{minipage}
+\end{figure}
+
+En este caso usar ambas podas parece mejorar levemente la poda del resto, aunque claramente como conclusión podemos decir que la mejor poda de las dos es la de agregar camión.
