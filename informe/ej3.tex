@@ -94,8 +94,22 @@ La primera llamada a la función $bt$ se hace con el producto $1$, $camiones$ ti
 \end{algorithm}
 
 
-%\subsection{Demostraci\'on} %OPCIONAL
+\subsection{Demostraci\'on}
 %aca va la demostracion formal del problema refiriendonos al pseudocodigo o redefiniendo variables (definir todas las cosas de las que vamos a hablar).
+El algoritmo se basa en la técnica de backtracking por lo cual para demostrar su correctitud mostraremos que efectivamente recorre todas las posibles soluciones.
+Las posibles soluciones están caracterizadas por todas las particiones de un conjunto con un cardinal igual a la cantidad de productos. Los elementos del conjunto
+serían los productos y los conjuntos de la partición los camiones. El árbol que tiene en sus hojas todas las particiones de un conjunto puede construirse
+recursivamente, ya que cada nivel se puede escribir en función del anterior. El árbol de particiones tiene en el nivel $k$ todas los conjuntos
+de particiones de $k$ elementos. Para demostrar esto por inducción basta ver primero que la raíz, nuestro caso base, cumple la propiedad, ya que es 
+un conjunto con un elemento y todos los conjuntos de particiones es sólamente el conjunto con ese elemento. Luego, el paso inductivo, consiste
+en ver que cualquier partición de un conjunto de $k+1$ elementos podríamos expresarla como una partición de un conjunto de $k$ elementos con el 
+elementos $k+1$ agregado a alguno de los conjuntos de la partición. De esa forma basta tomar todas las hojas del árbol de particiones para $k$ elementos
+y a cada una de ellas agregarle tantos hijos como conjuntos tenga la partición y cada hijo agregar el elemento $k+1$ en un conjunto diferente. Además,
+hay que incluir al conjunto vacío que está incluido en todos los conjuntos, lo cual significaría agregar el elemento $k+1$ en un conjunto separado
+dentro de la partición. Esta construcción del árbol que acabamos de describir es precisamente lo que realiza nuestro algoritmo. Empezamos con un camión
+y el primer producto en él, esto representaría la raíz del árbol. Luego realizamos una llamada recursiva por hoja, el elemento $k+1$ en nuestro problema
+está representado por el $producto_{k+1}$, y agregarlo a cada conjunto, incluyendo el vacío, implica probar agregar el elemento a cada uno de los camiones
+que ya tenemos y agregar un camión nuevo con el $producto_{k+1}$ es equivalente a agregar un conjunto sólo con el elemento $k+1$.
 
 \subsection{An\'alisis de complejidad}
 %aca decimos cuanto cuesta cada parte del algoritmo y damos un valor final de la complejidad del algoritmo, ej O(logn).
