@@ -72,7 +72,6 @@ int main(int argc, const char *argv[])
 void bt(int producto, vector<Camion> &camiones, vector<Camion> &mejorTemp,
     int umbral, int n)
 {
-    //if (producto == n) mostrarCamiones(camiones);
     if (producto == n && camiones.size() < mejorTemp.size()) {
         mejorTemp = camiones;
         return;

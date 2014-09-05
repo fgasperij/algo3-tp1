@@ -1,4 +1,4 @@
-// Este programa va a crear una cantidad X de instancias aleatorias de Y productos, para Y = {1,...,algunValor} y las va a devolver por SALIDA ESTANDAR (consola). El umbral va a ser fijo (quizas convenga despues variar esto a ver qué pasa). Vale que para toda peligrosidad, 0 <= peligrosidad <= UMBRAL + 1.
+// Este programa va a crear una cantidad X de instancias aleatorias de N productos, para N = {1,...,algunValor} y las va a devolver por SALIDA ESTANDAR (consola). El umbral va a ser fijo. Vale que para toda peligrosidad, 0 <= peligrosidad <= UMBRAL + 1.
 // Hay que usar ./randomGen > textFile para guardar a disco.
 // g++ -O3 randomGen.cpp -o randomGen
 

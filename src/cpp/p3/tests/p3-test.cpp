@@ -1,5 +1,5 @@
-// Dado un archivo de entrada con X instancias para cada Y cantidad de productos (Y <= 100), devuelvo por SALIDA ESTANDAR, en cada linea, lo siguiente:
-// Y <espacio> promedio{ los minimo{ tiempos en ejecutar la instancia i-ésima para Y productos } de todas las instancias de Y productos}
+// Dado un archivo de entrada con X instancias para cada N cantidad de productos (N <= 100), devuelvo por SALIDA ESTANDAR, en cada linea, lo siguiente:
+// N <espacio> promedio{ los minimo{ tiempos en ejecutar la instancia i-ésima para N productos } de todas las instancias de N productos}
 // Es decir, cada instancia se ejecutará una cierta cantidad de veces y se tomará el mínimo para mejorar la precisión, y luego se promediaran estos valores para las instancias de cada cantidad de productos.
 // g++ -std=c++0x p3-test.cpp -o p3-test
 #include <climits>
@@ -71,12 +71,10 @@ int main(int argc, const char *argv[])
         }
         sumaTiemposPorCantProductos[n] += minTiempo.count();
         cantidadInstanciasPorCantProductos[n]++;
-        //cout << n << " " << sumaTiemposPorCantProductos[n] << " " << cantidadInstanciasPorCantProductos[n] << endl;
     }
     
     for (int i = 2; i <= MAX_CANTIDAD_PRODUCTOS; i++) {
         int instancias = cantidadInstanciasPorCantProductos[i];
-        //cout << instancias << endl;
         if (instancias == 0) {
             continue;
         } else {
