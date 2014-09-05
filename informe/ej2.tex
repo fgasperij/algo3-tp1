@@ -131,8 +131,27 @@ del mismo.
 
 \subsection{Test de complejidad}
 %aca van los graficos y todos los testeos que hagamos para probar que en la practica el algoritmo cumple la complejidad que propusimos en el punto anterior
+Para \textit{testear} en la práctica la complejidad del Algoritmo, se hizo un generador de instancias de pruebas: \textit{"generadorTests.cpp"}.
 
-\subsection{Testing}
+Este archivo genera $10000$ instancias que son $10$ para cada valor de $n$, que es el numero de edificios que va desde $1$ hasta $1000$.
+Este generador consiste en $3$ ciclos anidados, el más externo hace $n$ iteraciones, ya que se repite para cada edificio (archivo: \textit{entrada.txt} en la carpeta \textit{src/p2/}).
+El segundo ciclo hace exactamente $10$ iteraciones, y es este el que hace que haya $10$ instancias para cada valor de $n$.
+Por último, el ciclo más interno genera $n$ filas de tres enteros ($x, h, y$) aleatorios menores que $1000$ y con la condición de que $x$ sea menor que $y$.
+Los números aleatorios son creados por la función \textit{rand()} de la librería estandard de C++.
+
+Para probar todas estas instancias, creamos otro archivo \textit{test.cpp}, que toma entradas de este problema y devuelve las mediciones del tiempo que este tarda en correr.
+Para cada instancia de prueba, éste algoritmo calcula $10$ veces el tiempo de ejecución y luego obtiene un promedio de todos los resultados. Esto minimiza posibles errores de medición y hace que los resultados sean más exactos.
+Luego, promedia también los resultados para los $n$ que son iguales, obteniendo un valor de tiempo de ejecución promedio para cada valor de $n$.
+
+Como vimos en la sección anterior, la complejidad de este algoritmo es de $O(nlog(n))$, por lo tanto, para obtener valores más graficos y más faciles de interpretar a la hora de graficar, dividimos cada resultado por $log(n)$.
+
+Estos resultados fueron exportados a otro archivo de salida (\textit{tiempos.output}) y los resultados estan expresados a continuación:
+
+\ponerGrafico{test2.png}{Tiempos de Ejecucion dividido log(n) de entradas aleatorias}{0.6}{}
+
+Concluyendo a partir del gráfico de Tiempos de Ejecución, podemos afirmar que efectivamente la complejidad es $O(nlog(n))$ ya que los resultados fueron divididos por $log(n)$ y el gráfico muestra una evidente recta.
+
+%\subsection{Testing}
 %aca ponermos todos nuestros casos bordes, como actua nuestro algoritmo en los casos particulares.
 
 
