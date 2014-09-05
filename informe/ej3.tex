@@ -6,7 +6,7 @@ Tenemos una cantidad $n$ de productos químicos que deseamos repartir en la meno
 \begin{align*}
 peligrosidadCamion(C) = \sum\limits_{\substack{p_i,p_j \in C \\ i < j}} peligrosidadEntreProductos(p_i,p_j)
 \end{align*}
-Resolveremos este problema usando un algoritmo de backtracking implementando podas para reducir la complejidad temporal.
+Resolveremos este problema usando un algoritmo de backtracking implementando podas para reducir el tiempo de cómputo.
 
 \subsection{Resoluci\'on}
 \subsubsection{Algoritmo}
@@ -111,7 +111,7 @@ T(i,k) = \left(\sum\limits_{\substack{j = 1}}^k O(c_j) + T(i-1,k)\right) + O(1) 
 \end{align*}
 Dentro de la suma está la complejidad de cada iteración del ciclo que recorre los camiones, siempre haremos \textbf{agregarNoSuperaUmbral} que es $O(c_j)$ y en el peor caso se llama a \textbf{agregarProducto} (de nuevo $O(c_j)$) y hará la recursión con un producto menos; luego se hace \textbf{sacarProducto} que es $O(\log c_j)$. Como la suma de los productos de todos los camiones es la cantidad de productos ya repartidos, podemos acotar $\sum\limits_{\substack{j = 1}}^k c_j$ con $n-i$. Fuera de la sumatoria tenemos el costo de agregar un camión nuevo, llamar recursivamente con un producto menos y un camión más (con el elemento que le pusimos), y de sacar el camión agregado. Sacar y poner un camión en un array redimensionable tiene una complejidad amortizada de O(1). Entonces, queda:
 \begin{align*}
-T(i,k) = O(n-i+1) + k \times T(i-1,k) + T(i-1,k+1)
+T(i,k) &= O(n-i+1) + k \times T(i-1,k) + T(i-1,k+1)
 \end{align*}
 El problema de esta ecuación es que es difícil ver la complejidad con respecto a la cantidad $n$ de productos iniciales. Sabemos que nuestro algoritmo se comporta así: para el primer producto, solamente llama a \textbf{bt} una vez, ya que hay un solo camión, y por lo tanto una sola posibilidad; en cambio, para el segundo producto hay dos: o lo mete en el primer camión, o lo mete en uno nuevo; y ahora tenemos dos configuraciones para el producto 3, y cinco posibilidades. Sabemos que en todo momento no puede haber más camiones que productos ya repartidos, entonces podemos acotar $k$ inferiormente con $n-i$. Así, podemos definir:
 \begin{align*}
@@ -126,31 +126,85 @@ T(n) &= O(1) + O(2) + O(2 \times 3) + O(2 \times 3 \times 4) + 2 \times 3 \times
 T(n) &= O\left(\sum\limits_{\substack{i = 1}}^n i!\right) + O(n!)
 \end{align*}
 Por lo tanto, la complejidad temporal de peor caso es $O\left(\sum\limits_{\substack{i = 1}}^n i!\right)$.
-%Veamos como sería el cálculo para nuestro algoritmo. Empezamos con $n-1$ y $k = 1$:
-%\begin{align*}
-%T(n-1,1) = O(n-1) + 1 \times T(n-2,1) + T(n-2,2) \\
-%T(n-2,1) = O(n-2) + 1 \times T(n-3,1) + T(n-3,2) \\
-%T(n-2,2) = O(n-2) + 2 \times T(n-3,2) + T(n-3,3)
-%\end{align*}
-%Entonces
-%\begin{align*}
-%T(n-1,1) &= O(n-1) + 2 \times O(n-2) + T(n-3,1) + 2 \times T(n-3,2) + T(n-3,3) \\
-%T(n-3,1) &= O(n-3) + 1 \times T(n-4,1) + T(n-4,2) \\
-%T(n-3,2) &= O(n-3) + 2 \times T(n-4,2) + T(n-4,3) \\
-%T(n-3,3) &= O(n-3) + 3 \times T(n-4,3) + T(n-4,4)
-%\end{align*}
-%Y queda
-%\begin{align*}
-%T(n-1,1) = O(n-1) + 2 \times O(n-2) + 4 \times O(n-3) + T(n-4,1) + \\ + 3 \times T(n-4,2) + 3 \times T(n-4,3) + T(n-4,4)
-%\end{align*}
-%T(n-4,1) = O(n-4) + T(n-5,1) + T(n-5,2)
-%T(n-4,2) = O(n-4) + 2 * T(n-5,2) + T(n-5,3)
-%T(n-4,3) = O(n-4) + 3 * T(n-5,3) + T(n-5,4)
-%T(n-4,4) = O(n-4) + 4 * T(n-5,4) + T(n-5,5)
-%entonces T(n-1,1) = O(n-1) + 2*O(n-2) + 4*O(n-3) + 8*O(n-4) + T(n-5,1) + T(n-5,2) + 3*2*T(n-5,2) + 3*T(n-5,3) + 3*3*T(n-5,3)+ 3*T(n-5,4) + 4*T(n-5,4) + T(n-5,5) = O(n-1) + 2*O(n-2) + 4*O(n-3) + 8*O(n-4) + T(1) + 7*T(2) + 12*T(3) + 7*T(4) + T(5)
 
-\subsection{Test de complejidad}
+\subsection{Tests de complejidad}
 %aca van los graficos y todos los testeos que hagamos para probar que en la practica el algoritmo cumple la complejidad que propusimos en el punto anterior
+Testearemos instancias aleatorias con cantidad de productos en $[2,...,15]$. Los tiempos para cada valor $n$ de productos se calculan como el promedio del tiempo de las instancias, donde a su vez el tiempo para cada instancia será el mínimo de varias ejecuciones del algoritmo, para mejorar la precisión. Para los casos sin podas o con podas malas, se tomaron pocas instancias ya que el tiempo de ejecución era astronómicamente alto (se tomaron 5 instancias, con 2 cálculos para el mínimo en cada una). Para los demás casos, se tomaron 500 instancias con 10 cálculos de mínimo para cada una.
 
-%\subsection{Testing}
-%aca ponermos todos nuestros casos bordes, como actua nuestro algoritmo en los casos particulares.
+En la sección anterior dijimos que la complejidad del algoritmo sin podas es $O\left(\sum\limits_{\substack{i = 1}}^n i!\right)$. Hicimos tests de medición de tiempo para corroborar esto. Notemos que 
+\begin{align*}
+O\left(\sum\limits_{\substack{i = 1}}^n i!\right) \subseteq O(n \times n!)
+\end{align*}
+Por otro lado, por propiedad del logaritmo, 
+\begin{align*}
+ln(n \times n!) &= ln(n) + ln(n!)
+\end{align*}
+También sabemos que por la aproximación de Stirling del factorial, 
+\begin{align*}
+ln(n!) &= n \times ln(n) - n + O(ln(n))
+\end{align*}
+Por lo tanto, a partir de algún $n$ vale que 
+\begin{align*}
+ln(n \times n!) \approx ln(n) + n \times ln(n) - n = (n+1) ln(n) - n
+\end{align*}
+En el próximo gráfico ploteamos, para $n$ $=$ cantidad de productos, $t_n$ $=$ tiempo promedio para n productos, la función $f(n) = \frac{ln(t_n)}{(n+1) ln(n) - n}$ lo cual a partir de algún $n$ debería ser constante. En efecto:
+
+\begin{figure}[H]
+	\begin{minipage}[t]{\linewidth}
+		\centering
+		\includegraphics[width=\textwidth]{complejidad.jpg}
+		%\caption{Con colisión total}
+		\label{fig:p3_complejidad}
+	\end{minipage}
+\end{figure}
+
+Analicemos ahora cómo se comporta el algoritmo con las siguientes podas: 
+\begin{enumerate}
+\item La poda ``del resto de los productos'' consiste en lo siguiente: Sabiendo que en la rama en la que estoy tenemos $C-1$ camiones, donde $C$ es la cantidad de camiones de la mejor solución hasta el momento, al insertar exitosamente un producto en alguno de los camiones, va a chequear --antes de llamar a la recursión-- si el resto de los productos pueden entrar en algún camión. Si algún producto no puede entrar en ningún camión, eso implica que necesitamos al menos un camión más, lo cual empata a la mejor solución, es entonces donde se poda esta rama que no llevará a nada mejor. El problema de esta cota es que pueden estar recalculándose múltiples veces si un producto $x$ entra en un camión $y$, lo cual puede ser un problema porque cada vez que se ejecuta esta poda se hacen $O(n^2)$ comparaciones de peligrosidades.
+\item La poda de ``agregar camión'' también se activa al estar en $C-1$ camiones, y es más simple y rápida que la anterior: si llegamos al punto donde tenemos que agregar un camión, salimos, porque empatamos a la mejor solución y no sirve toda esa rama.
+\end{enumerate}
+
+Si vemos los tiempos de las tres configuraciones, tenemos:
+\begin{figure}[H]
+	\begin{minipage}[t]{\linewidth}
+		\centering
+		\includegraphics[width=\textwidth]{comparacion_tiempos_podas.jpg}
+		%\caption{Con colisión total}
+		\label{fig:p3_comparacion_3_configuraciones}
+	\end{minipage}
+\end{figure}
+
+Como vemos en la figura, sólamente podar por resto de los productos no mejora demasiado el costo temporal, pero tampoco lo empeora. Por otro lado, casi no se ve la poda de agregar camión, cuya efectividad es relativamente buena. Cabría preguntarse si esta segunda poda obtiene una complejidad mejor que $O(n \times n!)$. Lamentablemente, no es así, como podemos ver en el siguiente gráfico:
+
+\begin{figure}[H]
+	\begin{minipage}[t]{\linewidth}
+		\centering
+		\includegraphics[width=\textwidth]{complejidad_con_poda_camion.jpg}
+		%\caption{Con colisión total}
+		\label{fig:p3_complejidad_con_poda_camion}
+	\end{minipage}
+\end{figure}
+
+A pesar de esto, para valores bajos de $n$ es una excelente poda. Por último, podemos evaluar qué ocurre si usamos ambas podas. Comparémoslas:
+
+\begin{figure}[H]
+	\begin{minipage}[t]{\linewidth}
+		\centering
+		\includegraphics[width=\textwidth]{comparacion_poda_camion_con_ambas_podas.jpg}
+		%\caption{Con colisión total}
+		\label{fig:p3_comparacion_poda_camion_con_ambas_podas}
+	\end{minipage}
+\end{figure}
+
+Usar ambas podas no mejora el tiempo de ejecución en comparación con la poda de agregar camión. Veamos si usar ambas es mejor que usar solamente la del resto:
+
+\begin{figure}[H]
+	\begin{minipage}[t]{\linewidth}
+		\centering
+		\includegraphics[width=\textwidth]{comparacion_poda_resto_con_ambas_podas.jpg}
+		%\caption{Con colisión total}
+		\label{fig:p3_comparacion_poda_resto_con_ambas_podas}
+	\end{minipage}
+\end{figure}
+
+En este caso usar ambas podas parece mejorar levemente la poda del resto, aunque claramente como conclusión podemos decir que la mejor poda de las dos es la de agregar camión.
