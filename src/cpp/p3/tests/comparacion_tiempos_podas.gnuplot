@@ -10,6 +10,18 @@ set title 'Tiempos de ejecución de ambas podas en comparación con sólo la pod
 plot 'tiempos_con_poda_agregar_camion.txt' with lines linewidth 2 title "Sólo poda de agregar camión", \
 'tiempos_con_ambas_podas.txt' with lines linewidth 2 title "Ambas podas"
 
+set terminal jpeg size 800,600
+set output "comparacion_poda_resto_con_ambas_podas.jpg"
+#set xrange [0:200]
+set yrange [0:]
+set xtics 1
+set xlabel "Cantidad de productos"
+set ylabel "Tiempo en microsegundos"
+set title 'Tiempos de ejecución de ambas podas en comparación con sólo la poda de resto de productos'
+
+plot 'tiempos_con_poda_resto_productos.txt' with lines linewidth 2 title "Sólo poda de resto de productos", \
+'tiempos_con_ambas_podas.txt' with lines linewidth 2 title "Ambas podas"
+
 
 set terminal jpeg size 800,600
 set output "comparacion_tiempos_podas.jpg"
