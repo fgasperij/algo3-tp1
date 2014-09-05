@@ -10,8 +10,8 @@ Una configuración más complicada podría ser el puente 0 0 1 0 0 0 1 1 0 0 par
 \subsection{Resoluci\'on}
 \subsubsection{Algoritmo}
 %aca ponemos una descripcion de nuestro algorimtmo, presentamos la variables las estructuras y decimos que hacemos.
-Dado este problema de optimización planteamos resolverlo con un algoritmo goloso, que consiste en seguir ''una heurística consistente para elegir la opción óptima en cada paso local con la esperanza de llegar a una solución general óptima'' [Cormen p.414 (Greedy Algorithms)].
-El problema a optimizar es encontrar la mínima cantidad de saltos para cruzar el puente, y la decisi\'on golosa o la opcion \'optima en cada paso local es elegir el tablon m\'as lejano que pueda alcanzar el participante de acuerdo al rango de salto que tenga. 
+Dado este problema de optimización planteamos resolverlo con un algoritmo goloso, que consiste en seguir ``una heurística consistente para elegir la opción óptima en cada paso local con la esperanza de llegar a una solución general óptima'' [Cormen p.414 (Greedy Algorithms)].
+El problema a optimizar es encontrar la mínima cantidad de saltos para cruzar el puente, y la decisi\'on golosa o la opcion \'optima en cada paso local es elegir el tabl\'on m\'as lejano que pueda alcanzar el participante de acuerdo al rango de salto que tenga. 
 
 El algoritmo recibe un vector con los tablones del puente (puente$[i]$) y un entero que representa el máximo salto que puede dar el participante (\textit{maxSalto}).
 
@@ -74,7 +74,8 @@ Dada un Sec$<$Salto$>$ $se$.
 $(\forall i:Nat, i < se.long)(esMax(s,i) \wedge \sum_{j=0}^{se.long-1}se_{j} = puente.long)\implies$ \\ $\not\exists (se':Sec<Salto>) /
 se.long < se'.long \wedge \sum_{j=0}^{se'.long-1}se'_{j} \geq puente.long)$  
 
-Donde esMax devuelve true cuando el no existe un salto mas largo desde la posicion donde estamos.
+Dado s:Secuencia$<Salto>$, i:Nat esMax(s,i) devuelve true cuando no existe un salto mas largo desde la posicion $p$ donde estamos, donde posicion es la sumatoria de elementos hasta el elemento i.
+ 
 %implementar esto.
 
 Para probar esto, vamos a utilizar la definici\'on can\'onica de demostraci\'on de correctitud para algoritmos greedy, dada en clase por la c\'atedra. Un algoritmo goloso, puede plantearse como el siguiente esquema:
@@ -113,12 +114,17 @@ Bueno para probar estos 4 puntos, primero vamos a definir F, S y P.
 
 
 S es un conjunto de los saltos que uno puede dar representados por los pares (x,y) de tal que el representa un salto desde la posicion x hasta la posicion y con 0$<$ y-x$\leq$salto m\'ax.
-F es una funci\'on selecciona de S el par con mayor diferencia (y - x) y menor coordenada x.
+
+F es una funci\'on que selecciona de S el par con mayor diferencia (y - x) y menor coordenada x.
+
 P($S^{opt}$,X) devuelve TRUE cuando el tabl\'on donde cae X no esta roto y cuando el salto no se superpone con un salto anterior.
 %Puente[$\sum_{i=0}^{S^{opt}.long}S^{opt}_{j}$ + X] $==$ 0 
 %Donde Puente es el array de tablones, donde un tabl\'on esta sano si su valor es 0.
+
 Vamos a definir ser sub-soluci\'on como ser el prefijo de una soluci\'on cuando ordenamos por orden de saltos.
+
 Como la cantidad de saltos que puede darse en un puente es finita, va existir al menos un m\'aximo local y vamos a poder asignarle un cardinal. Entonces como existe al menos un conjunto de saltos de cardinal \'optimo, el conjunto $\emptyset$ empieza siendo sub-soluci\'on de ese conjunto.
+
 Con esto queda comprobado 1) y 2).
 
 Dado $S^{opt}$ sub-soluci\'on al principio del ciclo, queremos garantizar que $S^{opt}$ es sub-soluci\'on al finalizarlo.
@@ -138,21 +144,23 @@ Sea Y un elemento que se superpone con X.
 Sean $Y_{1},Y_{2},X_{1},X_{2}$ las componentes de Y,X respectivamente.
 $Y_{1}\geq X_{1}$ ya que sino X no tenia la primera componente m\'inima.
 
-Si $Y_{1} = X_{1}$ entonces $X_{2} \geq Y_{2}$ ya que sino F hubiera agarrado primero a Y. Por lo tanto yo podria tomar $S'^{*}$ = $S^{*}$ $\cup$ ${X}$ - ${Y}$ y eso seguiria siendo sub-soluci\'on ya que el intervalo I = [$Y_{2},X_{2}$] estar\'ia cubierto con un solo salto por un soluci\'on que contenga a X, y necesitaria al menos 2 para un soluci\'on que contega a Y.
+Si $Y_{1} = X_{1}$ entonces $X_{2} \geq Y_{2}$ ya que sino F hubiera agarrado primero a Y. 
+
+Por lo tanto yo podria tomar $S'^{*}$ = $S^{*}$ $\cup$ ${X}$ - ${Y}$ y eso seguiria siendo sub-soluci\'on ya que el intervalo I = [$Y_{2},X_{2}$] estar\'ia cubierto con un solo salto por un soluci\'on que contenga a X, y necesitaria al menos 2 para un soluci\'on que contega a Y.
 
 Si $Y_{1} > X_{1}$ entonces hay dos casos:
 
 Si $Y_{2} \leq X_{2}$ entonces todo el intervalo cubierto por Y, estaria inclu\'ido en el intervalo cubierto por X, y en el intervalo I = [$X_{1},Y_{1}$], I $\neq \emptyset$ habr\'ia que cubrirlo con un salto por lo tanto $S^{*}$ no ser\'ia subsoluci\'on. Mismo para I' =  [$Y_{2},X_{2}$].
 
-Si $Y_{2} > X_{2}$ entonces yo se que X,Y no pueden estar en la misma soluci\'on(se superponen). Pero se que Y pertenece a alguna soluci\'on. Veamos que existe un intervalo que cubre X, pero no Y que seria el intervalo I = [$X_{1}$,$Y_{2}$].
-Bueno pero como X contiene a todo este intervalo, existe una solucion que contiene al salto $S_{Y}$ = ($X_{1}$,$Y_{2}$). Asi que dado un soluci\'on que contiene a Y, al menos contiene un salto m\'as en ese intervalo. Recordemos que puede haber saltos que extiendan el ultimo salto de $S^{opt}$, pero no nos interesan porque no ser\'ian compatibles con $S^{opt}$ ya que se superpondr\'ian.
+Si $Y_{2} > X_{2}$ entonces yo se que X,Y no pueden estar en la misma soluci\'on(se superponen). Pero se que Y pertenece a alguna soluci\'on. Veamos que existe un intervalo que cubre X, pero no Y que seria el intervalo I = [$X_{1}$,$Y_{1}$].
+Bueno pero como X contiene a todo este intervalo, existe una solucion que contiene al salto $S_{Y}$ = ($X_{1}$,$Y_{1}$). Asi que dado un soluci\'on que contiene a Y, al menos contiene un salto m\'as en ese intervalo. Recordemos que puede haber saltos que extiendan el ultimo salto de $S^{opt}$, pero no nos interesan porque no ser\'ian compatibles con $S^{opt}$ ya que se superpondr\'ian.
  
 Luego dado el intervalo I'=[$X_{2}$,$Y_{2}$], como X se superpone con Y, $X_{2}$ $>$ $Y_{1}$, por lo tanto existe y es posible un salto $S_{X}$ con componentes ($X_{2}$,$Y_{2}$).
 Luego si analizamos las dos sub-soluciones contienen al mismo intervalo en dos saltos, por lo que si existe una soluci\'on para que contiene a Y, existe una soluci\'on que contenga a X. 
 
 Con esto queda comprobado 3).
 
-Finalmente, si S $== \emptyset$ entonces no hay mas saltos, por lo tanto nuestra $S^{opt}$ recorre todo incluye a todo el puente.
+Finalmente, si S $== \emptyset$ entonces no hay mas saltos, por lo tanto nuestra $S^{opt}$ recorre e incluye a todo el puente.
 Tenemos $S^{opt}$  que sabemos es una sub-soluci\'on de $S^{*}$. Y si $S^{opt}$ ya recorrio todo el puente, no hace falta agregarle ning\'un salto, por lo tanto $S^{opt} =S^{*}$.  
 
 Con esto queda comprobado 4).
@@ -227,14 +235,12 @@ $O($\textit{cruzarPuentes}$) = O(n*k)$
 %esto de decir que el algoritmo depende de k, yo no lo pondria porque sino nos van a decir que no es O(n) como pidieron ellos.
 
 \label{an}
-Entonces por cada paso que da, el algoritmo calcula hasta k tablones para saber cual es el pr\'oximo que no este roto m\'aximo, pero con la particularidad que calcula primero el mas lejano, por lo tanto dado un salto de longitud k':Nat, k'$\leq$ k, el pr\'oximo salto S, va a tener que ser mayor o igual a k - k', ya que sino S caeria en un tabl\'on roto.
+Podemos ver que la cota es todavia mejor.
+Por cada paso que da, el algoritmo calcula hasta k tablones para saber cual es el pr\'oximo que no este roto m\'aximo, pero con la particularidad que calcula primero el mas lejano, por lo tanto dado un salto de longitud k':Nat, k'$\leq$ k, el pr\'oximo salto S, va a tener que ser mayor o igual a k - k', ya que sino S caeria en un tabl\'on roto.
 Esto sucede porque k' esta acotado por los tablones que est\'an rotos.
 Por ejemplo, suponiendo un k = 10. Dentro de un intervalo de tablones de 10 elementos, el tabl\'on 10, 9 y 8 est\'an rotos. Por lo tanto k' = 7. Entonces vemos que los tablones rotos por arriba son los que acotan a k', luego el pr\'oximo salto debe ser mayor a 3. Y si se itera mas de k - k' veces, el puente no tiene soluci\'on.
 Esto lo que implica que dado cualquier k, el algoritmo siempre va a recorrer a lo sumo N elementos dentro del puente. El peor caso seria k=1.
-Finalmente podemos concluir que es de orden $O(n)$.
-
-
-Podemos ver que el algoritmo depende de $k$, es decir, del \textit{maxsalto} del participante, con lo cual podemos considerar que tiene una complejidad pseudopolinomial ya que depende de una variable de entrada, pero como sabemos que $k$ es acotado por una constante finalmente podemos concluir que es de orden $O(n)$.
+Si a esto le agregamos la construcci\'on del array de entrada para el puente es de costo lineal en funci\'on de n, finalmente podemos concluir que todo el algoritmo es de orden $O(n)$.
 
 \subsection{Test de complejidad}
 %aca van los graficos y todos los testeos que hagamos para probar que en la practica el algoritmo cumple la complejidad que propusimos en el punto anterior
@@ -272,7 +278,7 @@ Vamos a iterar desde (i$=$step;i$<$puenteMax;i+=step), vamos a hacer $cantidadDe
 
 Luego dado un tiempo $T_{i}$ siendo este el promedio de todas las corridas de tamaño i, vamos a realizar un analisis de la complejidad obtenida.
 
-Para el salto s:Nat que va a poder dar cada participante en cada instancia de puente tambien es n\'umero aleatorio tal que
+Para el salto s:Nat que va a poder dar cada participante en cada instancia de puente tambien es un n\'umero aleatorio tal que
 
 saltoMax:Nat, s $\leq$ saltoMax $\wedge$ saltoMax $<<$ i.
 
@@ -353,15 +359,15 @@ Dado un puente p y participante con salto m\'aximo m.
 \begin{itemize}
   \item TestConPuenteConTamanio0() $=$ Chequea soluci\'on para p.largo $=$ 0.
   \item 	TestConSaltoMaximo0() $=$ Chequea soluci\'on para s $=$ 0.
-  \item TestConSaltoMaximoMayorAPuente(); Chequea soluci\'on para s $\geq$ p.largo 
-  \item testConPuenteNegativo(); $=$ Chequea soluci\'on para p.largo $\leq$ 0
-  \item testConSaltoNegativo(); $=$ Chequea soluci\'on para s $\leq$ 0
+  \item TestConSaltoMaximoMayorAPuente() Chequea soluci\'on para s $\geq$ p.largo 
+  \item testConPuenteNegativo() $=$ Chequea soluci\'on para p.largo $\leq$ 0
+  \item testConSaltoNegativo() $=$ Chequea soluci\'on para s $\leq$ 0
 \end{itemize}
 
 \subsubsection{Test de archivos est\'aticos}
 
 El objetivo de este test era probar la correctitud de nuestra implementaci\'on a partir de un archivo est\'atico de entrada y un archivo est\'atico de salida.
-Estos archivos est\'atico de entrada y salida se los puede encontar en el directorio del programa bajo el nombre de "puentes-estatico.txt" para la entrada y "solucion-estatica" para la salida.
+Estos archivos est\'atico de entrada y salida se los puede encontar en el directorio del programa bajo el nombre de ``puentes-estatico.txt" para la entrada y ``solucion-estatica" para la salida.
 
 %hay que ponerle algunos casos mas a estos archivos%
 
@@ -377,29 +383,29 @@ El test corre con k entradas de puentes generadas aleatoriamente.
 
 \subsubsection{Test generador de casos}
 
-El objetivo de este test es corroborar que dado un puente p, generado aleatoriamente y dada la solucion s. Corroborar que efectivamente si el algoritmo no devuelve soluci\'on entonces efectivamente no existe tal, y si la devuelve entonces s es soluci\'on del problema.
+El objetivo de este test es dado un puente p, generado aleatoriamente y dada la solucion s, corroborar que efectivamente si el algoritmo no devuelve soluci\'on entonces efectivamente no existe tal, y si la devuelve entonces s es soluci\'on del problema.
 
 Para probar que no existe una soluci\'on para un puente p, vamos a aprovecharnos de una caracteristica de los puentes sin soluci\'on.
 
-Para todo puente p sin soluci\'on dado un participante con salto m\'aximo m , existe un intervalo de tablones $p_{i}$,$p_{j}$ tal que para todo tabl\'on t dentro de ese intervalo, t est\'a roto.
-La comprobaci\'on informal de este enunciado es que si no existies ese intervalo, el participante siempre podria dar saltos al intervalo de tablones rotos que tiene adelante. Por lo tanto podr\'ia saltar por todo el puente.
+Para todo puente p sin soluci\'on dado un participante con salto m\'aximo m:Nat, y dados i,j:Nat, j-i $=$ m , existe un intervalo de tablones $[p_{i}$,$p_{j}]$ tal que para todo tabl\'on t dentro de ese intervalo, t est\'a roto.
+La comprobaci\'on informal de este enunciado es que si no existiese ese intervalo, el participante siempre podria dar saltos al intervalo de tablones rotos que tiene adelante. Por lo tanto podr\'ia saltar por todo el puente.
 
-Entonces dado un puente sin soluci\'on se chequea efectivamente que existe al menos un intervalo.
+Entonces dado un puente sin soluci\'on se chequea efectivamente que existe al menos un intervalo con estas caracter\'isticas.
 
 Para corroborar que una s efectivamente es soluci\'on de p, vamos a iterar por los tablones de s y chequear en p, que estos no esten rotos.
-Si bien esto no nos garantiza que s sea optima, nos garantiza que sea soluci\'on.
+Si bien esto no nos garantiza que s sea optima, nos garantiza que sea un camino posible de tablones.
 
-Una mejora para estos test ser\'ia encontrar una caracter\'istica de s, tal que no asegure que es \'optima. Para ello, podr\'iamos generarnos por fuerza bruta todas las secuencias de saltos posibles y agarrar las que sean soluci\'on y garantizar que nuestra s es mejor o igual que todas las dem\'as.
+Una mejora para estos test ser\'ia encontrar una caracter\'istica de s, tal que no asegure que es \'optima. Para ello, podr\'iamos generarnos por fuerza bruta todas las secuencias de saltos posibles y agarrar las que sean soluci\'on y garantizar que nuestra s es mejor o igual que todas las dem\'as (tiene menos elementos).
 
 \subsection{Compilaci\'on y corrida}
 
 
-La clase la cual debemos correr es Main, y debe tener un par\'ametro de entrada que sea el nombre del archivo del cual vamos a leer. \'Este archivo debe estar en el directorio del proyecto a en la carpeta "TP1-EJ1", a la altura donde estan los dem\'as archivos de texto.
+La clase la cual debemos correr es Main, y debe tener un par\'ametro de entrada que sea el nombre del archivo del cual vamos a leer. \'Este archivo debe estar en el directorio del proyecto a en la carpeta ``TP1-EJ1", a la altura donde estan los dem\'as archivos de texto.
 Para correr la clase Main, hay que posicionarse en el directorio bin del proyecto:
 
 cd TP1-P1$/$bin
 
-Luego desde este directorio con el comando java main/Main $<$nombre de archivo$>$.
+Luego desde este directorio con el comando java main/Main ..$/$$<$nombre de archivo$>$.
 
 Ej: TP1-P1$/$bin java main$/$Main ../puente.txt
 
