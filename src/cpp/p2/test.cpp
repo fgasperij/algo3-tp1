@@ -1,8 +1,9 @@
+// g++ -std=c++0x prueba_time.cpp -o prueba_time
 #include <set>
 #include <vector>
 #include <assert.h>
 #include <iostream>
-
+#include <chrono>
 using namespace std;
 
 struct Edificio {
@@ -51,7 +52,8 @@ int main(int argc, const char *argv[])
             assert(edificios[i].right >= 0);
             assert(edificios[i].left < edificios[i].right);
         }
-
+        cout << chrono::high_resolution_clock::period::den << endl;//TIEMPO
+  		auto start_time = chrono::high_resolution_clock::now();//TIEMPO
         // cada edificio va a tener un evento de empezar y uno de terminar
         vector<Evento> eventos = generarEventos(edificios);
         // los eventos son ordenados por su coordenada x de forma ascendente
@@ -59,7 +61,9 @@ int main(int argc, const char *argv[])
         sort(eventos.begin(), eventos.end(), &comparar_eventos_por_x);
 
         vector<Punto> contorno = calcularContorno(eventos);
-
+        auto end_time = chrono::high_resolution_clock::now();//TIEMPO
+  		cout << chrono::duration_cast<chrono::nanoseconds>(end_time - start_time).count() << "<<TIEMPO";//TIEMPO
+  		cout << endl;
         for (int i = 0; i < contorno.size(); i++) {
             cout << contorno[i].x << " " << contorno[i].y;
             if (i < (contorno.size()-1)) cout << " ";
