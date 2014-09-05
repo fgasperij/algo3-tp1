@@ -39,27 +39,69 @@ Como requerimiento adicional, el algoritmo para $n$ rectángulos debe tener una 
 
 \subsection{Resoluci\'on}
 \subsubsection{Algoritmo}
-%aca ponemos una descripcion de nuestro algoritmo, presentamos la variables las estructuras y decimos que hacemos.
-COMPLETAR
+Como introducción al pseudocódigo de nuestra implementación describiremos las ideas que lo respaldan para facilitar 
+la asimilación del mismo. El algoritmo es muy simple pero tiene un par de puntos sutiles sobre los
+que vale la pena hacer hincapié. A grandes rasgos se basa en los siguientes puntos:
+\begin{enumerate}
+	\item divide a los edificios en eventos de apertura y cierre
+	\item ordena los eventos convenientemente
+	\item itera el conjunto de eventos y va a agregando a su solución parcial los puntos en los que
+	identifica cambios de altura (forma en la que definimos los puntos del contorno)
+\end{enumerate} 
+Cada edificio se representa con un evento de apertura y uno de cierre. Los dos eventos van a compartir la altura
+original del edificio pero van a diferir en la coordenada $x$ que van a llevar: uno se quedará con la correspondiente
+al inicio del edificio y el otro con la correspondiente a la finalización del mismo. 
+El orden es más fácil pensarlo como una suerte de Radix Sort. Primero se ordena los eventos por su coordenada
+$x$. Luego entre, entre los que comparten su coordenada $x$, se deja primero a los eventos de apertura y luego
+a los de cierre. Finalmente, entre los que comparten coordenada $x$ y tipo, se ordena: en orden decreciente de altura
+a los de tipo apertura y en orden creciente a los de tipo cierre. Vamos a mostrar la conveniencia de este orden
+mostrando casos en los que traería problemas si estuvieran desordenados con respecto al criterio que recién describimos:
+\begin{itemize}
+	\item desordenados con respecto a $x$: tenemos dos edificios $e^1$ y $e^2$ superpuestos de forma tal que
+	$e^1_p < e^2_p < e^1_f < e^2_f$ y $e^1_h > e^2_h$. Si iteramos primero $e^2$ vamos a suponer que en el comienzo
+	del mismo hay un punto del contorno porque $e^1$ todavía no sabemos que estaba abierto.
+	\item mismo $x$, desordenados respecto al tipo: suponemos que los eventos están todos correctamente ordenados
+	con respecto a su coordenada $x$, sin embargo, dentro de los que comparten una misma coordenada $x$ a veces primero
+	se colocó a los de cierre y luego a los de apertura. El problema que puede traer esto es que cuando yo veo
+	un evento de cierre que era el que daba la altura máxima al contorno para obtener la nueva altura del contorno
+	me fijo en los edificios que está abiertos. Si no cuento en ese momento con todos los que están abiertos
+	en ese $x$ entonces puede que registre que el punto del contorno es diferente de lo que debería haber sido
+	de saber que los que todavía no iteré de apertura estaban abiertos.
+	\item eventos de apertura en orden creciente: supongamos que sólo tenemos 3 edificios, los 3 empiezan en
+	la misma coordenada $x$ y los itero en orden creciente de altura. Cada vez que itero por uno de los eventos 
+	de apertura me va a decir que la nueva altura es mayor a la que ya tengo del contorno por lo cual va a
+	ingresar un nuevo punto al contorno, resultando en 3 puntos del contorno con el mismo $x$.
+	\item eventos de cierre en orden decreciente: es muy similar al anterior, necesito haber cerrado los más
+	bajos primero porque si no cuando cierro el más alto pienso que los que se van a cerrar en esa misma
+	coordenada $x$ todavía están abiertos cuando en realidad no están abiertos en esa coordenada $x$, simplemente
+	como los eventos se computan de a uno el orden es muy importante.
+\end{itemize}
+Además, queremos aclarar que para saber en todo momento qué edificios están abiertos mantenemos actualizada
+una estructura con ésta información. La estructura no contiene los edificios que están abiertos, contiene
+las alturas de los edificios que están abiertos. Con esta información basta ya que en todo momento
+a nosotros nos interesa saber qué alturas tenemos disponibles para nuestro contorno, independientemente
+del edificio al que pertenezcan. Cuando iteramos sobre un evento de apertura agregamos su altura a la 
+estructura, cuando iteramos sobre un evento de cierre eliminamos un elemento con valor igual a la altura
+del mismo.
 
 \subsubsection{Pseudoc\'odigo}
 %aca va el pseudocodigo del problema.
 \begin{algorithm}[H]
 \begin{algorithmic}
 \STATE $eventos$ $\gets$ extraer\_eventos($edificios$)
-\STATE $contorno_parcial$ $\gets$ $secuencia_vacia$
+\STATE $contorno_{parcial}$ $\gets$ $secuencia\_vacia$
 \STATE $h_{actual}$ $\gets$ 0
 \WHILE {$eventos$ $\neq$ $\emptyset$}
 	\STATE $ev$ $\gets$ proximo\_evento($eventos$)
 	\IF {abre($ev$)}
 		\IF {$h_{actual}$ $<$ $ev_h$}
 			\STATE $h_{actual}$ $\gets$ $ev_h$
-			\STATE AgregarAtrás($<ev_x, ev_h>$, $contornoParcial$)
+			\STATE AgregarAtrás($<ev_x, ev_h>$, $contorno_{parcial}$)
 		\ENDIF
 	\ELSE
 		\IF {$h_{actual}$ = $ev_h$ $\land$ maxAbierto($ev_x$) $<$ $h_{actual}$}
 			\STATE $h_{actual}$ = maxAbierto($ev_x$)
-			\STATE AgregarAtrás($<ev_x, h_{actual}>$, $contorno_parcial$)  
+			\STATE AgregarAtrás($<ev_x, h_{actual}>$, $contorno_{parcial}$)  
 		\ENDIF
 	\ENDIF
 \ENDWHILE

@@ -1,6 +1,6 @@
 Para calcular la complejidad del algoritmo que implementamos primero debemos
-explicar cómo resolvimos en la implementación el cáculo de maxAbierto($x$) con
-una estructuras de datos conveniente que nos permite realizar todas las
+explicar cómo resolvimos en la implementación el cáculo de maxAbierto($x$) 
+utilizando una estructuras de datos conveniente que nos permite realizar todas las
 operaciones necesarias sin superar la cota de complejidad requerida.
 Contamos con un Multiconjunto, que llamaremos $abiertos$, que nos provee la
 siguiente interfaz:
@@ -12,9 +12,52 @@ siguiente interfaz:
 utilizaremos esta estructura de forma tal que calcular la función maxAbierto($x$)
 sea equivalente a obtener el máximo de este multiconjunto. Para ello debemos
 mantenerlo actualizado, esto implica que en cada iteración si el evento es de tipo
-apertura lo agregamos a $abiertos$ (costo O($log n$)). 
-
-La complejidad de este algoritmo puede calcularse como:
-\begin{displaymath}
-	O(extraer_eventos) + \#eventos * O(proximo_evento) + 
-\end{displaymath}
+apertura agregamos su altura a $abiertos$ (costo O($log n$)) y si es de cierre 
+eliminamos sólo una vez la altura del mismo (costo O($log n$)). De esta forma
+conocer la altura máxima de entre los edificios abiertos se reduce a encontrar el 
+máximo dentro de $abiertos$ (costo O($log n$)).
+Basándonos en el pseudocódigo presentado la complejidad de este algoritmo puede 
+calcularse como:
+\begin{equation}
+\begin{split}
+	O(extraer\_eventos) + \#eventos * O(proximo\_evento) + \\
+	\#eventos\_de\_apertura * O(insertar\_en\_abiertos) + \\
+	\#eventos\_de\_cierre * O(eliminar\_de\_abiertos) + \\
+	\#contorno * (O(insertar\_en\_lista) + O(obtener\_maximo))
+\end{split}
+\end{equation}
+\begin{itemize}
+	\item extraer\_eventos: generamos 2 eventos por cada edificio y el costo
+	de generar un evento es O(1). Por lo tanto, el costo total es O($2n$).
+	\item proximo\_eventos: nosotros realizamos el orden primero y luego simplemente iteramos
+	la estructura donde los guardamos, un Arreglo, cuyo costo de acceso eso $O(1)$. Por lo
+	tanto, el costo se encuentra fuera del ciclo y es el costo de ordenar los eventos. Como
+	las operaciones necesarias para decidir si un evento es mayor que otro están acotadas
+	por una constante el costo de ordenar es igual que si fueran tipos primitivos. La función
+	sort() de la STL nos garantiza una complejidad O($n log n$).
+	\item \#eventos es exactamente igual a $2*n$ siendo $n$ la cantidad de edificios
+	de la instancia. Tenemos una cantidad de eventos de apertura exactamente igual a la 
+	cantidad de eventos de cierre: $\#eventos\_de\_apertura = \#eventos\_de\_cierre = n/2$
+	\item insertar, eliminar y obtener el máximo de $abiertos$ ya vimos que tiene un costo
+	de O($log n$). Como la cantidad de abiertos podemos fácilmente acotarla por $n$ ya que
+	no pueden haber más edificios abiertos que el total de edificios que tenemos, éstas
+	operaciones tienen costo O($log n$) siendo $n$ la cantidad de edificios.
+	\item la cantidad de puntos del contorno podemos acotarla por la cantidad de eventos,
+	cada evento podría llegar a representar un punto del contorno $\#contorno < 2n$.
+\end{itemize}
+Reemplazando en la ecuación anterior:
+\begin{equation}
+\begin{split}
+	Costo = O(2n) + O(n\text{ }log\text{ } n) + 2n * O(1) + n * O(log\text{ } n) + n * O(log\text{ } n) + 2n * (O(1) + O(log\text{ } n))
+\end{split}
+\end{equation}
+\begin{equation}
+\begin{split}
+	Costo = O(n) + O(n\text{ }log\text{ } n) + O(n) + O(n\text{ }log\text{ } n) + O(n\text{ }log\text{ } n) + (O(n) + O(n\text{ }log\text{ } n))
+\end{split}
+\end{equation}
+\begin{equation}
+\begin{split}
+	Costo = O(n\text{ }log\text{ }n)
+\end{split}
+\end{equation}
