@@ -39,9 +39,26 @@ Como requerimiento adicional, el algoritmo para $n$ rectángulos debe tener una 
 
 \subsection{Resoluci\'on}
 \subsubsection{Algoritmo}
-%aca ponemos una descripcion de nuestro algoritmo, presentamos la variables las estructuras y decimos que hacemos.
-COMPLETAR
-
+Como introducción al pseudocódigo de nuestra implementación describiremos las ideas que lo respaldan para facilitar 
+la asimilación del mismo. El algoritmo es muy simple pero tiene un par de puntos sutiles sobre los
+que vale la pena hacer hincapié. A grandes rasgos se basa en los siguientes puntos:
+\begin{enumerate}
+	\item divide a los edificios en eventos de apertura y cierre
+	\item ordena los eventos convenientemente
+	\item itera el conjunto de eventos y va a agregando a su solución parcial los puntos en los que
+	identifica cambios de altura (forma en la que definimos los puntos del contorno)
+\end{enumerate} 
+Cada edificio se representa con un evento de apertura y uno de cierre. Los dos eventos van a compartir la altura
+original del edificio pero van a diferir en la coordenada $x$ que van a llevar: uno se quedará con la correspondiente
+al inicio del edificio y el otro con la correspondiente a la finalización del mismo. 
+El orden es más fácil pensarlo como una suerte de Radix Sort. Primero se ordena los eventos por su coordenada
+$x$. Luego entre, entre los que comparten su coordenada $x$ , se deja primero a los eventos de apertura y luego
+a los de cierre. Finalmente, entre los que comparten coordenada $x$ y tipo, se ordena: en orden decreciente de altura
+a los de tipo apertura y en orden creciente a los de tipo cierre. Vamos a mostrar la conveniencia de este orden
+mostrando casos en los que traería problemas si estuvieran desordenados con respecto al criterio que recién describimos:
+\begin{itemize}
+	\item desordenados con respecto a $x$: 
+\end{itemize}
 \subsubsection{Pseudoc\'odigo}
 %aca va el pseudocodigo del problema.
 \begin{algorithm}[H]
