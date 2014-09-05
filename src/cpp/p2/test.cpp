@@ -4,6 +4,7 @@
 #include <assert.h>
 #include <iostream>
 #include <chrono>
+#include <math.h> 
 using namespace std;
 
 struct Edificio {
@@ -38,6 +39,9 @@ bool comparar_eventos_por_x(const Evento &a, const Evento &b);
 int main(int argc, const char *argv[])
 {
     int cantidadDeEdificios;
+    int contador = 1;
+    int sumaTiempos = 0;
+    int tiempoParcial = 0;
     while(true) {
         cin >> cantidadDeEdificios;
         if (cantidadDeEdificios == 0) return 0;
@@ -52,23 +56,32 @@ int main(int argc, const char *argv[])
             assert(edificios[i].right >= 0);
             assert(edificios[i].left < edificios[i].right);
         }
-        cout << chrono::high_resolution_clock::period::den << endl;//TIEMPO
-  		auto start_time = chrono::high_resolution_clock::now();//TIEMPO
-        // cada edificio va a tener un evento de empezar y uno de terminar
-        vector<Evento> eventos = generarEventos(edificios);
-        // los eventos son ordenados por su coordenada x de forma ascendente
-        // desempata por el tipo de evento, EMPIEZA gana
-        sort(eventos.begin(), eventos.end(), &comparar_eventos_por_x);
+        for(int j = 0; j < 10; j++){
+            auto start_time = chrono::high_resolution_clock::now();//TIEMPO
+            // cada edificio va a tener un evento de empezar y uno de terminar
+            vector<Evento> eventos = generarEventos(edificios);
+            // los eventos son ordenados por su coordenada x de forma ascendente
+            // desempata por el tipo de evento, EMPIEZA gana
+            sort(eventos.begin(), eventos.end(), &comparar_eventos_por_x);
 
-        vector<Punto> contorno = calcularContorno(eventos);
-        auto end_time = chrono::high_resolution_clock::now();//TIEMPO
-  		cout << chrono::duration_cast<chrono::nanoseconds>(end_time - start_time).count() << "<<TIEMPO";//TIEMPO
-  		cout << endl;
-        for (int i = 0; i < contorno.size(); i++) {
-            cout << contorno[i].x << " " << contorno[i].y;
-            if (i < (contorno.size()-1)) cout << " ";
+            vector<Punto> contorno = calcularContorno(eventos);
+            auto end_time = chrono::high_resolution_clock::now();//TIEMPO
+            tiempoParcial = tiempoParcial + chrono::duration_cast<chrono::nanoseconds>(end_time - start_time).count();//TIEMPO
         }
-        cout << endl;
+  		
+        tiempoParcial = tiempoParcial / 10; //divido la corrida de la misma instancia
+        int sumaTiempos = sumaTiempos + tiempoParcial;
+  		if(contador == 10){
+            sumaTiempos = sumaTiempos / 10;
+            sumaTiempos = sumaTiempos / log(cantidadDeEdificios);
+            cout << cantidadDeEdificios << " " << sumaTiempos / 10;
+            cout << endl;
+            contador=1;
+            tiempoParcial = 0;
+            sumaTiempos = 0;
+        }
+        contador++;
+
     }
 
     return 0;
