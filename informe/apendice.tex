@@ -313,6 +313,86 @@ bool comparar_eventos_por_x(const Evento &a, const Evento &b)
 }
 \end{lstlisting}
 
+Código fuente del generador de instancias:
+\begin{lstlisting}[frame=single]
+int main(int argc, const char *argv[])
+{
+    srand (time(NULL));
+    int i;
+    for(i=1;i<=1000; i++)
+    {
+        for (int j = 0; j < 10; j++)
+        {
+            cout << i <<"\n";
+            for (int k = 0; k < i; k++)
+            {
+                int y = rand() % (1000) + 2;
+                int x = rand() % (y-1);
+                int h = rand() % (1000);
+                cout << x << " " << h << " " << y << "\n";
+            }
+            cout << "\n";
+        }
+    }
+    cout << "0"; 
+    return 0;
+}
+\end{lstlisting}
+
+Código fuente del test (sólo se modifica \textbf{main}):
+\begin{lstlisting}[frame=single]
+int main(int argc, const char *argv[])
+{
+    int cantidadDeEdificios;
+    int contador = 1;
+    int sumaTiempos = 0;
+    int tiempoParcial = 0;
+    while(true) {
+        cin >> cantidadDeEdificios;
+        if (cantidadDeEdificios == 0) return 0;
+
+        vector<Edificio> edificios(cantidadDeEdificios);
+        for (int i = 0; i < cantidadDeEdificios; i++) {
+            edificios[i] = Edificio();
+            cin >> edificios[i].left >> edificios[i].h >> edificios[i].right;
+
+            assert(edificios[i].left >= 0);
+            assert(edificios[i].h >= 0);
+            assert(edificios[i].right >= 0);
+            assert(edificios[i].left < edificios[i].right);
+        }
+        for(int j = 0; j < 10; j++){
+            auto start_time = chrono::high_resolution_clock::now();//TIEMPO
+            // cada edificio va a tener un evento de empezar y uno de terminar
+            vector<Evento> eventos = generarEventos(edificios);
+            // los eventos son ordenados por su coordenada x de forma ascendente
+            // desempata por el tipo de evento, EMPIEZA gana
+            sort(eventos.begin(), eventos.end(), &comparar_eventos_por_x);
+
+            vector<Punto> contorno = calcularContorno(eventos);
+            auto end_time = chrono::high_resolution_clock::now();//TIEMPO
+            tiempoParcial = tiempoParcial + chrono::duration_cast<chrono::nanoseconds>(end_time - start_time).count();//TIEMPO
+        }
+        
+        tiempoParcial = tiempoParcial / 10; //divido la corrida de la misma instancia
+        int sumaTiempos = sumaTiempos + tiempoParcial;
+        if(contador == 10){
+            sumaTiempos = sumaTiempos / 10;
+            sumaTiempos = sumaTiempos / log(cantidadDeEdificios);
+            cout << cantidadDeEdificios << " " << sumaTiempos / 10;
+            cout << endl;
+            contador=1;
+            tiempoParcial = 0;
+            sumaTiempos = 0;
+        }
+        contador++;
+
+    }
+
+    return 0;
+}
+\end{lstlisting}
+
 \subsection{Problema 3: Biohazard}
 
 Código fuente del algoritmo que resuelve el problema (con la poda de ``agregar camión''):
