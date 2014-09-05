@@ -44,6 +44,49 @@ int calcularProximoTablon(int puente[], int cantidadDeTablones, int actual, int 
 }
 \end{lstlisting}
 
+Por una cuesti\'on de tiempos, la implementaci\ testeada de este ejercicio esta en el leguaje Java. El algoritmo es similar a su implementaci\'on en c++.
+
+
+Código de la implementaci\'on (en Java):
+\lstset{language=Java,
+                keywordstyle=\color{blue},
+                stringstyle=\color{red},
+                commentstyle=\color{magenta},
+                morecomment=[l][\color{magenta}]{\#}
+}
+\begin{lstlisting}[frame=single]
+int saltos = 0;
+StringBuilder builder = new StringBuilder();
+		if (saltoMax > 0) {
+			int pos = 0;
+			while (pos < puente.largo() + 1) {
+				int i = saltoMax;
+				boolean salte = false;
+				while (i > 0 && !salte) {
+					if (puente.estaRoto(i + pos)) {
+						i--;
+					} else {
+						pos += i;
+						builder.append(" " + pos);
+						saltos++;
+						salte = true;
+						i = saltoMax;
+					}
+				}
+				//fallo algun intervalo
+				if (!salte) {
+					return "no";
+				}
+			}
+		}
+		if (saltos != 0) {
+			//existe sol		
+			return saltos + builder.toString();
+		}
+		//fallo en el primer interavlo
+		return "no";
+\end{lstlisting}
+
 Código de los tests de complejidad (en Java):
 \lstset{language=Java,
                 keywordstyle=\color{blue},
