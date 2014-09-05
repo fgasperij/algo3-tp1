@@ -1,0 +1,592 @@
+\section{Apéndice: Códigos fuente}
+
+\subsection{Problema 1: Puentes sobre lava caliente}
+
+Código del algoritmo que resuelve el problema:
+\lstset{language=C++,
+                keywordstyle=\color{blue},
+                stringstyle=\color{red},
+                commentstyle=\color{magenta},
+                morecomment=[l][\color{magenta}]{\#}
+}
+\begin{lstlisting}[frame=single]
+vector<int> cruzarPuente(int puente[], int cantidadDeTablones, int largoSalto)
+{
+    int actual = 0, proximo = 0;
+    vector<int> saltos;
+    while (actual <= cantidadDeTablones) {
+        proximo = calcularProximoTablon(puente, cantidadDeTablones, actual, largoSalto);
+
+        if (proximo == IMPOSIBLE) return vector<int>();
+
+        saltos.push_back(proximo);
+
+        if (proximo > cantidadDeTablones) return saltos;
+
+        actual = proximo;
+    }
+}
+
+// Dado un puente y un tablón devuelve cuál es el salto más largo que se puede realizar desde ese tablón. Si no puede realizarse ningún salto devuelve IMPOSIBLE(-1).
+int calcularProximoTablon(int puente[], int cantidadDeTablones, int actual, int largoSalto)
+{
+    while (largoSalto > 0) {
+       if (actual + largoSalto > cantidadDeTablones) 
+           return cantidadDeTablones+1;
+       
+       if (puente[actual+largoSalto] == 0)
+           return actual+largoSalto;
+           
+       largoSalto--;
+    }
+
+    return IMPOSIBLE;
+}
+\end{lstlisting}
+
+Por una cuesti\'on de tiempos, la implementaci\ testeada de este ejercicio esta en el leguaje Java. El algoritmo es similar a su implementaci\'on en c++.
+
+
+Código de la implementaci\'on (en Java):
+\lstset{language=Java,
+                keywordstyle=\color{blue},
+                stringstyle=\color{red},
+                commentstyle=\color{magenta},
+                morecomment=[l][\color{magenta}]{\#}
+}
+\begin{lstlisting}[frame=single]
+public static String saltarConOutPut(Puente puente, int saltoMax) {
+int saltos = 0;
+StringBuilder builder = new StringBuilder();
+	if (saltoMax > 0) {
+		int pos = 0;
+		while (pos < puente.largo() + 1) {
+			int i = saltoMax;
+			boolean salte = false;
+			while (i > 0 && !salte) {
+				if (puente.estaRoto(i + pos)) {
+					i--;
+				} else {
+					pos += i;
+					builder.append(" " + pos);
+					saltos++;
+					salte = true;
+					i = saltoMax;
+				}
+			}
+			//fallo algun intervalo
+			if (!salte) {
+				return "no";
+			}
+		}
+	}
+	if (saltos != 0) {
+		//existe sol		
+		return saltos + builder.toString();
+	}
+	//fallo en el primer interavlo
+	return "no";
+	}
+\end{lstlisting}
+
+Código de los tests de complejidad (en Java):
+\lstset{language=Java,
+                keywordstyle=\color{blue},
+                stringstyle=\color{red},
+                commentstyle=\color{magenta},
+                morecomment=[l][\color{magenta}]{\#}
+}
+\begin{lstlisting}[frame=single]
+// Este test lo vamos a utilizar para medir el tiempo que tarde en resolverse una entrada en el procesador. Para ello vamos a tratar de mediar una entrada resuelta k veces. El test va a ser similiar al de tamaño fijo pero corriendo cada instancia k veces.
+public class TestDeEntradaAlProcesador {
+
+    private static int PUENTEMAX = 500000000;
+
+    private static Random random = new Random(new Date().getTime());
+
+    private static int SALTOMAX = 10;
+
+    private static int CANTIDADDECORRIDAS = 10;
+
+    private static int CANTIDADDEIERACIONES = 10;
+
+    public static void main(String[] args) {
+        testEntradaAlProcesador();
+    }
+
+    public static void testEntradaAlProcesador() {
+        for (int i = 500000; i < PUENTEMAX; i += 500000) {
+            float prom = 0;
+            for (int j = 0; j < CANTIDADDEIERACIONES; j++) {
+                float promSubj = 0;
+                int saltoMax = random.nextInt(SALTOMAX);
+                boolean[] b = new boolean[i];
+                for (int k = 0; k < b.length; k++) {
+                    b[k] = random.nextBoolean();
+                }
+                for (int k = 0; k < CANTIDADDECORRIDAS; k++) {
+                    Long ats = new Date().getTime();
+                    Puente puente = new Puente(b);
+                    Saltarin.saltar(puente, saltoMax);
+                    Long dps = new Date().getTime();
+                    promSubj += dps - ats;
+                }
+                prom += promSubj / (CANTIDADDECORRIDAS);
+
+            }
+            System.out.println(i / 100000 + "," + prom / CANTIDADDEIERACIONES);
+        }
+    }
+
+}
+
+public class TestDeTamanioFijo {
+
+    private static int PUENTEMAX = 500000000;
+
+    private static Random random = new Random(new Date().getTime());
+
+    private static int SALTOMAX = 10;
+
+    private static int CANTIDADDEIERACIONES = 100;
+
+    // Este metodo lo utilizamos para medir tiempos, notamos que a partir de los 500000000 elementos la entrada comienza a tener un diferencia de tiempo (tF-tI) significante El primer valor es el N, el segundo una constante k la cual hace que se resuelven k puentes de tamaño N. El algoritmo de me devuelve el promedio de solucion de esos puentes. Luego hay una tercer constante m que es el tamanio del saltoMax, la implementacion genera un saltoMax aleatorio, pero que no puede ser mayor a m. Vamos a generar casos que tengan N >> saltoMax, ya que en esos casos se ve mas clara la complejidad.
+    public static void main(String[] args) {
+        testDeComplejidad();
+    }
+
+    public static void testDeComplejidad() {
+        for (int i = 1; i < PUENTEMAX; i += 50000) {
+            float prom = 0;
+            for (int j = 0; j < CANTIDADDEIERACIONES; j++) {
+                int saltoMax = random.nextInt(SALTOMAX);
+                boolean[] b = new boolean[i];
+                for (int k = 0; k < b.length; k++) {
+                    b[k] = random.nextBoolean();
+                }
+                Long ats = new Date().getTime();
+                Puente puente = new Puente(b);
+                Saltarin.saltar(puente, saltoMax);
+                Long dps = new Date().getTime();
+                // Esto lo hacemos para evitar outlayers
+                if (j > 10) {
+                    prom += dps - ats;
+                }
+            }
+            System.out.println(i / 10000 + "," + prom
+                    / (CANTIDADDEIERACIONES - 10));
+        }
+    }
+}
+\end{lstlisting}
+
+\subsection{Problema 2: Horizontes lejanos}
+
+Código fuente del algoritmo que resuelve el problema:
+\lstset{language=C++,
+                keywordstyle=\color{blue},
+                stringstyle=\color{red},
+                commentstyle=\color{magenta},
+                morecomment=[l][\color{magenta}]{\#}
+}
+\begin{lstlisting}[frame=single]
+struct Edificio {
+    int left;
+    int right;
+    int h;
+};
+
+enum tipos_de_eventos {EMPIEZA, TERMINA};
+struct Evento {
+   Evento() : edificio(0) {};
+   Evento(tipos_de_eventos t, int x, int h, int edificio) : tipo(t), x(x), h(h), edificio(edificio) {};
+
+   bool empieza() const { return tipo == EMPIEZA; };
+
+   int edificio;
+   tipos_de_eventos tipo;
+   int x;
+   int h;
+};
+
+struct Punto {
+    Punto(int x, int y) : x(x), y(y) {};
+    int x;
+    int y;
+};
+
+int main(int argc, const char *argv[])
+{
+    int cantidadDeEdificios;
+    while(true) {
+        cin >> cantidadDeEdificios;
+        if (cantidadDeEdificios == 0) return 0;
+
+        vector<Edificio> edificios(cantidadDeEdificios);
+        for (int i = 0; i < cantidadDeEdificios; i++) {
+            edificios[i] = Edificio();
+            cin >> edificios[i].left >> edificios[i].h >> edificios[i].right;
+
+            assert(edificios[i].left >= 0);
+            assert(edificios[i].h >= 0);
+            assert(edificios[i].right >= 0);
+            assert(edificios[i].left < edificios[i].right);
+        }
+
+        // cada edificio va a tener un evento de empezar y uno de terminar
+        vector<Evento> eventos = generarEventos(edificios);
+        // los eventos son ordenados por su coordenada x de forma ascendente
+        // desempata por el tipo de evento, EMPIEZA gana
+        sort(eventos.begin(), eventos.end(), &comparar_eventos_por_x);
+
+        vector<Punto> contorno = calcularContorno(eventos);
+
+        for (int i = 0; i < contorno.size(); i++) {
+            cout << contorno[i].x << " " << contorno[i].y;
+            if (i < (contorno.size()-1)) cout << " ";
+        }
+        cout << endl;
+    }
+
+    return 0;
+}
+
+vector<Punto> calcularContorno(const vector<Evento> &eventos)
+{
+    // alturas de edificios abiertos
+    multiset<int> abiertos;
+    multiset<int>::iterator itAbiertos;
+    Evento eventoActual;
+    int alturaContornoActual = 0;
+    vector<Punto> contorno;
+
+    for (int i = 0; i < eventos.size(); i++) {
+        eventoActual = eventos[i];
+        if (eventoActual.empieza()) {
+            abiertos.insert(eventoActual.h);
+            if (eventoActual.h > alturaContornoActual) {
+                contorno.push_back(Punto(eventoActual.x, eventoActual.h));
+                alturaContornoActual = eventoActual.h;
+            }
+        } else {
+            // lo busco primero porque sólo quiero eliminar una aparición
+            // y puede que haya más de un edificio abierto con la misma
+            // altura
+            itAbiertos = abiertos.find(eventoActual.h); 
+            abiertos.erase(itAbiertos);
+            if (eventoActual.h == alturaContornoActual) {
+                int tempAltura = alturaContornoActual;
+                alturaContornoActual = (abiertos.empty() ? 0 : *abiertos.rbegin());
+                if (tempAltura != alturaContornoActual)
+                    contorno.push_back(Punto(eventoActual.x, alturaContornoActual));
+            }
+        }
+    }
+    
+    return contorno; 
+} 
+
+vector<Evento> generarEventos(const vector<Edificio> &edificios)
+{
+    int cantidadDeEdificios = edificios.size();
+    vector<Evento> eventos(cantidadDeEdificios*2);
+    for (int i = 0; i < cantidadDeEdificios; i++) {
+        eventos[i*2] = Evento (EMPIEZA, edificios[i].left, edificios[i].h, i);
+        eventos[i*2+1] = Evento (TERMINA, edificios[i].right, edificios[i].h, i);
+    }
+    
+    return eventos;
+}
+
+bool comparar_eventos_por_x(const Evento &a, const Evento &b)
+{
+    if (a.x == b.x) {
+        if (a.empieza() != b.empieza()) // distinto tipo => gana el de apertura
+          return a.empieza();
+
+        if (a.empieza()) { // son los dos de apertura
+          return a.h > b.h;
+        } else {           // son los dos de cierre
+          return a.h < b.h;
+        }
+    }
+    
+    return a.x < b.x;
+}
+\end{lstlisting}
+
+\subsection{Problema 3: Biohazard}
+
+Código fuente del algoritmo que resuelve el problema (con la poda de ``agregar camión''):
+\lstset{language=C++,
+                keywordstyle=\color{blue},
+                stringstyle=\color{red},
+                commentstyle=\color{magenta},
+                morecomment=[l][\color{magenta}]{\#}
+}
+\begin{lstlisting}[frame=single]
+struct Camion {
+    Camion() : productos(set<int>()), peligrosidad(0) {};
+    Camion(int producto) : peligrosidad(0) {
+        productos = set<int>();
+        productos.insert(producto);
+    };
+
+    set<int> productos;
+    int peligrosidad;
+};
+
+int peligrosidades[1024][1024];
+
+int main(int argc, const char *argv[])
+{
+    int n, umbralDePeligrosidad;
+    int i = 1;
+    while(true) {
+        cin >> n;
+        if (n == 0) return 0;
+        cout << "Instancia " << i << endl;
+        i++;
+        cin >> umbralDePeligrosidad;
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+               if (i == j) peligrosidades[i][i] = 0;
+               if (i < j) cin >> peligrosidades[i][j];  
+               if (i > j) peligrosidades[i][j] = peligrosidades[j][i];
+            }
+        }
+
+        vector<Camion> camiones;
+        camiones.push_back(Camion(0));
+        vector<Camion> solucion;
+        for (int i = 0; i < n; i++) {
+           solucion.push_back(Camion(i)); 
+        }
+        bt(1, camiones, solucion, umbralDePeligrosidad, n);
+        
+        int elementosCamiones[n];
+        set<int>::iterator it;
+        for(int i = 0; i < solucion.size(); i++) {
+            for (it = solucion[i].productos.begin(); it != solucion[i].productos.end(); it++) {
+                elementosCamiones[*it] = i;
+            }
+        }
+
+        cout << solucion.size() << " ";
+        for (int i = 0; i < n; i++) {
+            cout << elementosCamiones[i];
+            if (i < (n-1)) cout << " ";
+        }
+        cout << endl;
+        
+    }
+    return 0;
+}
+
+void bt(int producto, vector<Camion> &camiones, vector<Camion> &mejorTemp,
+    int umbral, int n)
+{
+    if (producto == n && camiones.size() < mejorTemp.size()) {
+        mejorTemp = camiones;
+        return;
+    }
+    if (producto == n) return;
+    for (int j = 0; j < camiones.size(); j++) {
+        if (agregarNoSuperaUmbral(producto, camiones[j], umbral)) {
+            int peligrosidadPrevia = agregarProducto(producto, camiones[j]);
+            bt(producto+1, camiones, mejorTemp, umbral, n);
+            sacarProducto(producto, camiones[j], peligrosidadPrevia);
+        }
+    }
+    if (camiones.size() < (mejorTemp.size()-1)) {
+        camiones.push_back(Camion(producto));
+        bt(producto+1, camiones, mejorTemp, umbral, n);
+        camiones.pop_back();
+    }
+
+    return;
+}
+
+bool agregarNoSuperaUmbral(int producto, const Camion &camion, int umbral)
+{
+    int acumPeligrosidad = camion.peligrosidad;
+    set<int>::iterator it;
+    for (it = camion.productos.begin(); it != camion.productos.end(); it++) {
+        acumPeligrosidad += peligrosidades[producto][*it];
+        if (acumPeligrosidad > umbral) return false;
+    }
+    
+    return true;
+}
+
+void sacarProducto(int producto, Camion &camion, int peligrosidadPrevia)
+{
+    camion.productos.erase(producto);
+    camion.peligrosidad = peligrosidadPrevia;
+}
+
+int agregarProducto(int producto, Camion &camion)
+{
+    int peligrosidadPrevia = camion.peligrosidad;
+    set<int>::iterator it;
+    for (it = camion.productos.begin(); it != camion.productos.end(); it++) {
+        camion.peligrosidad += peligrosidades[producto][*it];
+    }
+    camion.productos.insert(producto);
+    
+    return peligrosidadPrevia;
+}
+\end{lstlisting}
+
+Código fuente del generador de instancias aleatorias:
+\begin{lstlisting}[frame=single]
+// Este programa va a crear una cantidad X de instancias aleatorias de N productos, para N = {1,...,algunValor} y las va a devolver por SALIDA ESTANDAR (consola). El umbral va a ser fijo. Vale que para toda peligrosidad, 0 <= peligrosidad <= UMBRAL + 1.
+// Hay que usar ./randomGen > textFile para guardar a disco.
+// g++ -O3 randomGen.cpp -o randomGen
+
+#include <iostream>
+#include <unistd.h>
+#include <cstdlib>
+#include <cstdlib>
+
+using namespace std;
+
+const int CANT_INSTANCIAS = 5;
+const int LIM_PRODUCTOS = 15;
+const int UMBRAL = 100;
+
+int main(int argc, const char* argv[]) {
+    srand(time(NULL) + getpid()); // Seedeo
+    for (int totalProductos = 2; totalProductos <= LIM_PRODUCTOS; totalProductos++) {
+        for (int instancia = 1; instancia <= CANT_INSTANCIAS; instancia++) {
+            cout << totalProductos << " " << UMBRAL << endl;
+            for (int producto = 1; producto <= totalProductos - 1; producto++) {
+                for (int peligrosidad = 1; peligrosidad <= totalProductos - producto; peligrosidad++) {
+                    cout << rand() % (UMBRAL + 2) << " "; // Esto genera un entero random entre 0 y UMBRAL + 1.
+                }
+                cout << endl;
+            }
+        }
+    }
+    cout << "0" << endl;
+}
+\end{lstlisting}
+
+Código fuente del test de complejidad (sólo se modifican la función \textbf{bt} y \textbf{main}):
+\begin{lstlisting}[frame=single]
+// Dado un archivo de entrada con X instancias para cada N cantidad de productos (N <= 100), devuelvo por SALIDA ESTANDAR, en cada linea, lo siguiente:
+// N <espacio> promedio{ los minimo{ tiempos en ejecutar la instancia i-ésima para N productos } de todas las instancias de N productos}
+// Es decir, cada instancia se ejecutará una cierta cantidad de veces y se tomará el mínimo para mejorar la precisión, y luego se promediaran estos valores para las instancias de cada cantidad de productos.
+// g++ -std=c++0x p3-test.cpp -o p3-test
+#include <climits>
+#include <iostream>
+#include <vector>
+#include <set>
+#include <chrono>
+
+using namespace std;
+
+const int MAX_CANTIDAD_PRODUCTOS = 100;
+const int FOR_MINIMO = 2;
+const bool PODA_AGREGAR_CAMION = true;
+const bool PODA_RESTO_PRODUCTOS = true;
+
+int peligrosidades[MAX_CANTIDAD_PRODUCTOS][MAX_CANTIDAD_PRODUCTOS];
+
+int main(int argc, const char *argv[])
+{   
+    int sumaTiemposPorCantProductos[MAX_CANTIDAD_PRODUCTOS + 1] = { }; // Pongo cada tiempo en su casilla correspondiente, ie tiempo para i productos en suma[i]
+    int cantidadInstanciasPorCantProductos[MAX_CANTIDAD_PRODUCTOS + 1] = { }; // Idem para la cantidad de instancias, esto lo uso para promediar
+    int n, umbralDePeligrosidad;
+    while(true) {
+        cin >> n;
+        if (n == 0) break;
+        cin >> umbralDePeligrosidad;
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+               if (i == j) peligrosidades[i][i] = 0;
+               if (i < j) cin >> peligrosidades[i][j];  
+               if (i > j) peligrosidades[i][j] = peligrosidades[j][i];
+            }
+        }
+        
+        chrono::microseconds minTiempo(INT_MAX);
+        for (int i = 0; i < FOR_MINIMO; i++) {
+            // Acá considero que arranca el algoritmo
+            auto start_time = chrono::high_resolution_clock::now();
+            vector<Camion> camiones;
+            camiones.push_back(Camion(0));
+            vector<Camion> solucion;
+            for (int i = 0; i < n; i++) {
+               solucion.push_back(Camion(i)); 
+            }
+            bt(1, camiones, solucion, umbralDePeligrosidad, n);
+            // Acá terminó
+            auto end_time = chrono::high_resolution_clock::now();
+            chrono::microseconds temp = chrono::duration_cast<chrono::microseconds>(end_time - start_time);
+            if (temp < minTiempo)
+                minTiempo = temp;
+        }
+        sumaTiemposPorCantProductos[n] += minTiempo.count();
+        cantidadInstanciasPorCantProductos[n]++;
+    }
+    
+    for (int i = 2; i <= MAX_CANTIDAD_PRODUCTOS; i++) {
+        int instancias = cantidadInstanciasPorCantProductos[i];
+        if (instancias == 0) {
+            continue;
+        } else {
+            cout << i << " " << sumaTiemposPorCantProductos[i] / instancias << endl;
+        }
+    }
+    return 0;
+}
+
+void bt(int producto, vector<Camion> &camiones, vector<Camion> &mejorTemp,
+    int umbral, int n)
+{
+    if (producto == n && camiones.size() < mejorTemp.size()) {
+        mejorTemp = camiones;
+        return;
+    }
+    if (producto == n) return;
+    for (int j = 0; j < camiones.size(); j++) {
+        if (agregarNoSuperaUmbral(producto, camiones[j], umbral)) {
+            int peligrosidadPrevia = agregarProducto(producto, camiones[j]);
+            if (PODA_RESTO_PRODUCTOS) { // PODA DE RESTO DE LOS PRODUCTOS //
+                if (camiones.size() == mejorTemp.size() - 1) {
+                    //cout << "PODA PRODUCTOS" << endl;
+                    for (int i = producto + 1; i < n; i++) {
+                        bool entraEnAlguno = false;
+                        for (int c = 0; c < camiones.size(); c++) {
+                            if (agregarNoSuperaUmbral(i, camiones[c], umbral)) {
+                                entraEnAlguno = true;
+                                break;
+                            }
+                        }
+                        if (!entraEnAlguno) {
+                            sacarProducto(producto, camiones[j], peligrosidadPrevia);
+                            continue;
+                        }
+                    }
+                }
+            }
+            bt(producto + 1, camiones, mejorTemp, umbral, n);
+            sacarProducto(producto, camiones[j], peligrosidadPrevia);
+        }
+    }
+    if (PODA_AGREGAR_CAMION) { // PODA DE AGREGAR CAMION //
+        if (camiones.size() == mejorTemp.size() - 1) {
+            //cout << "PODA CAMIONES" << endl;
+            return;
+        }
+    }
+    camiones.push_back(Camion(producto));
+    bt(producto+1, camiones, mejorTemp, umbral, n);
+    camiones.pop_back();
+
+    return;
+}
+\end{lstlisting}
