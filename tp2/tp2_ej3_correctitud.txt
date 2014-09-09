@@ -1,0 +1,11 @@
+Sea S1 la solución construida con el árbol generador mínimo + menor arista de las que quedan sin poner. Esto genera un grafo conexo con exactamente un circuito. Sea x1 la última arista que se agrega al final.
+
+Supongamos que hay una solución mejor S2, esto es, costo(S1) > costo(S2)
+
+Si sacamos x1 a S1, costo(S1 - {x1}) <= costo(S2 - {cualquier arista del circuito}), ya que S1 - {x1} es árbol generador mínimo y S2 sin cualquier arista de su circuito es un árbol generador.
+
+Entonces, para toda arista x2 del circuito de S2, vale que costo(x2) < costo(x1), de lo contrario sería costo(S1) <= costo(S2), absurdo.
+Además, cada arista del circuito de S2 debe estar en S1, porque si no, no hubiéramos elegido x1 como arista final, habiendo una menor.
+
+Luego, el circuito de S2 está en S1, y ninguna de sus aristas es x1. Pero entonces S1 - {x1} tiene un circuito siendo un árbol, absurdo.
+El absurdo provino de suponer que hay una solución mejor que la construida por nuestro algoritmo.
