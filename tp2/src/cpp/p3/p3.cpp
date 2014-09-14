@@ -9,13 +9,15 @@ typedef int Vertice;
 
 class Arista {
     private:
-        int ID;
+        //int ID;
         Vertice v1;
         Vertice v2;
         int l;
     public:
-        Arista() : ID(-1), v1(-1), v2(-1), l(-1){}
-        Arista(const int & ID, const Vertice & v1, const Vertice & v2, const int & l) : ID(ID), v1(v1), v2(v2), l(l){}
+        //Arista() : ID(-1), v1(-1), v2(-1), l(-1){}
+        //Arista(const int & ID, const Vertice & v1, const Vertice & v2, const int & l) : ID(ID), v1(v1), v2(v2), l(l){}
+        Arista() : v1(-1), v2(-1), l(-1){}
+        Arista(const Vertice & v1, const Vertice & v2, const int & l) : v1(v1), v2(v2), l(l){}
         int costo() const {
             return l;
         }
@@ -47,9 +49,9 @@ class Arista {
         Vertice dameElOtroVertice(Vertice v) const {            // Requiere que (v == v1) ó (v == v2)
             return (v == v1) ? v2 : v1;
         }
-        int getID() const {
-            return ID;
-        }
+        //int getID() const {
+            //return ID;
+        //}
 };
 
 struct comparacionCosto {
@@ -57,11 +59,15 @@ struct comparacionCosto {
         // Quiero que:
         // Si tienen = costo entonces return ID1 < ID2
         // Si tiene !=costo entonces return COSTO1 < COSTO2
-        if (lhs.costo() == rhs.costo()) {
-            if( lhs.dameVerticeUno() == rhs.dameVerticeUno() ) {
+        if (lhs.costo() == rhs.costo()) { // (x1,y1,c), (x2,y2,c)
+            if( lhs.dameVerticeUno() == rhs.dameVerticeUno() ) { // (a,y1,c), (a,y2,c)
                 return lhs.dameVerticeDos() < rhs.dameVerticeDos();
-            } else {
-                return lhs.dameVerticeUno() < rhs.dameVerticeUno();
+            } else { // (a,y1,c), (b,y2,c) con a != b
+                if (lhs.dameVerticeUno() == rhs.dameVerticeDos() && lhs.dameVerticeDos() == rhs.dameVerticeUno()) {
+                    return false; // (a,b,c) y (b,a,c) son la misma arista
+                } else {
+                    return lhs.dameVerticeUno() < rhs.dameVerticeUno();
+                }
             }
             //return lhs.getID() < rhs.getID();
         } else {
@@ -73,13 +79,14 @@ struct comparacionCosto {
 void hallarCircuito(vector< list<Arista> > & aristasDeCadaVerticeAGM, bool * verticeVisitado, Vertice * verticeAnterior, Vertice actual, Vertice anterior, Arista * aristaAnterior);
 
 int main(int argc, const char* argv[]) {
-    unsigned int n, m;                                          // n = #vertices, m = #aristas
+    unsigned int n, m, costoTotal = 0;                          // n = #vertices, m = #aristas
     vector< list<Arista> > aristasDeCadaVertice;                // aristasDeCadaVertice[i] es la lista de las aristas del vértice i
     vector< list<Arista> > aristasDeCadaVerticeAGM;
     set<Arista, comparacionCosto> aristasGrafo;
     set<Vertice> verticesAGM;                                   // conjunto con los vertices ya puestos en el AGM parcial
-    set<Arista, comparacionCosto> aristasAGM;              // conjunto con las aristas ya puestas en el AGM parcial
-    set<Arista, comparacionCosto> aristasCandidatasAGM;    // conjunto de las aristas candidatas para el AGM en un momento dado
+    set<Arista, comparacionCosto> aristasAGM;                   // conjunto con las aristas ya puestas en el AGM parcial
+    set<Arista, comparacionCosto> aristasCandidatasAGM;         // conjunto de las aristas candidatas para el AGM en un momento dado
+    list<Arista> aristasAnillo;
     
     cin >> n >> m;
     
@@ -98,16 +105,12 @@ int main(int argc, const char* argv[]) {
         int l;
         cin >> v1 >> v2 >> l;
         v1--; v2--;                                             // Como los equipos van de 1 a n, resto uno para que v1 y v2 vayan de 0 a n-1. Al devolver la solución sumo 1 y listo
-        Arista a(i, v1, v2, l);
+        //Arista a(i, v1, v2, l);
+        Arista a(v1, v2, l);
         aristasDeCadaVertice[v1].push_back(a);
         aristasDeCadaVertice[v2].push_back(a);
         aristasGrafo.insert(a);
     }
-    
-    //cout << "Aristas del grafo original:" << endl;
-    //for (auto it = aristasGrafo.begin(); it != aristasGrafo.end(); it++) {
-        //cout << it->dameVertices().first + 1 << " " << it->dameVertices().second + 1 << endl;
-    //}
     
     // Arranco poniendo el vértice 0 en verticesAGM, y sus aristas en aristasCandidatasAGM
     verticesAGM.insert(0);
@@ -144,16 +147,6 @@ int main(int argc, const char* argv[]) {
         return 0;
     }
     
-    //cout << "Aristas del AGM:" << endl;
-    //for (auto it = aristasAGM.begin(); it != aristasAGM.end(); it++) {
-        //cout << it->dameVertices().first + 1 << " " << it->dameVertices().second + 1 << endl;
-    //}
-    
-    //cout << "Resto de las aristas:" << endl;
-    //for (auto it = aristasGrafo.begin(); it != aristasGrafo.end(); it++) {
-        //cout << it->dameVertices().first + 1 << " " << it->dameVertices().second + 1 << endl;
-    //}
-    
     // Ahora agrego la arista con menor peso:
     if (aristasGrafo.size() == 0) {                             // En aristasGrafo quedaron las aristas que no puse en el AGM
         cout << "no" << endl;
@@ -161,8 +154,6 @@ int main(int argc, const char* argv[]) {
     }
     Arista menor = *aristasGrafo.begin();
     aristasAGM.insert(menor);
-    int costoTotal;
-    list<Arista> aristasAnillo;
     for (auto it = aristasAGM.begin(); it != aristasAGM.end(); it++) {
         costoTotal += it->costo();
     }
@@ -179,16 +170,10 @@ int main(int argc, const char* argv[]) {
     
     hallarCircuito(aristasDeCadaVerticeAGM, verticeVisitado, verticeAnterior, segundo, primero, aristaAnterior);
     
-    //cout << "Arista nueva para completar el circuito: " << endl;
-    //cout << primero + 1 << " " << segundo + 1 << endl;
-    
-    //cout << "Aristas del circuito:" << endl;
     Vertice actual = primero;
     do {
         aristasAGM.erase(aristaAnterior[actual]);               // En aristasGM van a quedar las aristas fuera del circuito
         aristasAnillo.push_back(aristaAnterior[actual]);        // Lo contrario para aristasAnillo
-        //cout << aristaAnterior[actual].dameVerticeUno() + 1 << " " << aristaAnterior[actual].dameVerticeDos() + 1 << endl;
-        //cout << actual + 1 << " " << verticeAnterior[actual] + 1 << endl;
         actual = verticeAnterior[actual];
     } while(actual != primero);
     
@@ -199,15 +184,6 @@ int main(int argc, const char* argv[]) {
     for (auto it = aristasAGM.begin(); it != aristasAGM.end(); it++) {
         cout << it->dameVerticeUno() + 1 << " " << it->dameVerticeDos() + 1 << endl;
     }
-    //cout << "Resto de las aristas de la solucion:" << endl;
-    //for (auto it = aristasAGM.begin(); it != aristasAGM.end(); it++) {
-        //cout << it->dameVerticeUno() + 1 << " " << it->dameVerticeDos() + 1 << endl;
-    //}
-    
-    //cout << endl;
-    //cout << aristaAnterior[primero].dameVerticeUno() + 1 << " " << aristaAnterior[primero].dameVerticeDos() + 1 << endl;
-    //cout << aristaAnterior[3].dameVerticeUno() + 1 << " " << aristaAnterior[3].dameVerticeDos() + 1 << endl;
-    //cout << aristaAnterior[0].dameVerticeUno() + 1 << " " << aristaAnterior[0].dameVerticeDos() + 1 << endl;
     
     return 0;
 }
@@ -221,21 +197,14 @@ void hallarCircuito(vector< list<Arista> > & aristasDeCadaVerticeAGM, bool * ver
     if (verticeVisitado[actual]) {                      // El vertice actual ya fue visitado antes
         if (verticeAnterior[anterior] != actual) {      // Si es FALSE significa que estoy haciendo un circuito NO simple
             verticeAnterior[actual] = anterior;
-            //return actual;
         }
-        //return -1;
     } else {                                            // El vertice no fue visitado, tengo que seguir
-        //cout << "Vertice actual: " << actual + 1 << endl;
-        //cout << "Vertice anterior: " << anterior + 1 << endl;
         verticeVisitado[actual] = true;
         verticeAnterior[actual] = anterior;
         for (auto it = aristasDeCadaVerticeAGM[actual].begin(); it != aristasDeCadaVerticeAGM[actual].end(); it++) {
-            //cout << it->dameVertices().first << " " << it->dameVertices().second << endl;
             Vertice nuevoActual = it->dameElOtroVertice(actual);
             Vertice nuevoAnterior = actual;
             if (nuevoActual == anterior) continue;
-            //cout << "Proximo vertice: " << nuevoActual + 1 << endl;
-            //cout << "Arista anterior para proximo vertice: " << it->dameVerticeUno() + 1 << " " << it->dameVerticeDos() + 1 << endl;
             aristaAnterior[nuevoActual] = *it;
             hallarCircuito(aristasDeCadaVerticeAGM, verticeVisitado, verticeAnterior, nuevoActual, nuevoAnterior, aristaAnterior);
         }
